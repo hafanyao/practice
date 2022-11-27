@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圣杯布局</title>
+    <style>
+        .father {
+            height: 220px;
+            background-color: pink; 
+        }
+        .father .left {
+            float: left; 
+            width: 150px;
+            height: 140px;
+            background-color: blue; 
+        }
+        .father .right {
+            float: right; 
+            width: 150px;
+            height: 140px;
+            background-color: blue; 
+        }
+        .father .center {
+            height: 180px;
+            background-color: green;
+            overflow: hidden;
+            display: flex;
+        }
+        .father .triangle {
+            margin: auto;
+            width: 0;
+            height: 0;
+            border-top: 60px solid aqua; 
+            border-left: 60px solid red;
+            border-right: 60px solid red;
+            /* border-right: 60px solid red; 
+            border-bottom: 60px solid green; 
+            border-left: 60px solid yellow; */
+        }
+
+
+
+        section {
+            height: 220px;
+            position: relative;
+            padding: 0 150px;
+            margin: 30px 0;
+            background-color: blueviolet;
+        }
+        section .left, section .right {
+            height: 140px;
+            width: 150px;
+            position: absolute;
+            top: 0;
+            background-color: bisque;
+        }
+        section .left {
+            left: 0;
+        }
+        section .right {
+            right: 0;
+        }
+        section .center {
+            width: 100%;
+            height: 180px;
+            background-color: aquamarine;
+        }
+
+
+        /* 弹性布局 */
+        /* main {
+            background: pink;
+            display: flex;
+            height: 220px;
+        }
+        main .left, main .right {
+            height: 140px;
+            flex: 0 0 150px;
+            background-color: coral;
+        }
+        main .center {
+            flex: 1;
+            height: 180px;
+            background: blue;
+        } */
+        main {
+            height: 300px;
+            background-color: aqua;
+            display: flex;
+        }
+        main .left, main .right {
+            height: 240px;
+            flex: 0 0 150px;
+            background-color: aquamarine;
+        }
+        main .center {
+            height: 260px;
+            background-color: blue;
+            flex: 1;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="father"> 
+        <div class="left"></div> 
+        <div class="right"></div>
+        <div class="center">
+            <div class="triangle"></div>
+        </div> 
+    </div>
+
+    <section>
+        <div class="center"></div>
+        <div class="left"></div>
+        <div class="right"></div>
+    </section>
+
+    <main>
+        <div class='left'></div>
+        <div class='center'></div>
+        <div class='right'></div>
+    </main>
+
+    <script>
+        // async function async1() { 
+        //     console.log('async1 start') // 2
+        //     await async2() 
+        //     console.log('async1 end') // 6
+        // } 
+        // async function async2() { 
+        //     console.log('async2') // 3
+        // } 
+        // console.log('script start') // 1
+        // setTimeout(function () { 
+        //     console.log('setTimeout') // 8
+        // }, 0) 
+        // async1()
+        // new Promise(function (resolve) { 
+        //     console.log('promise1') // 4
+        //     resolve() 
+        // }).then(function () { 
+        //     console.log('promise2') // 7
+        // })
+        // console.log('script end') // 5
+
+
+
+        // var obj = { 
+        //     '2': 3, 
+        //     '3': 4, 
+        //     'length': 2, 
+        //     'splice': Array.prototype.splice, 
+        //     'push': Array.prototype.push
+        // }
+        // obj.push(1)
+        // obj.push(2)
+        // console.log(obj)
+
+
+
+        // Number.prototype.add = function(n) { return this.valueOf() + n; };
+        // Number.prototype.minus = function(n) { return this.valueOf() - n; };
+        // console.log((5).add(3).minus(2))
+        
+
+        // example 1 
+        var a={}, b='123', c=123; a[b]='b';
+        a[c]='c'; // a: {'123': 'c'}
+        console.log(a[b]); // a.123
+        // example 2
+        var a={}, b=Symbol('123'), c=Symbol('123'); 
+        a[b]='b'; 
+        a[c]='c'; 
+        console.log(a[b]); 
+        // example 3
+        var a={}, b={key:'123'}, c={key:'456'}; 
+        a[b]='b';
+        a[c]='c'; 
+        console.log(a[b]);
+
+        
+
+        function convert(list) { 
+            const res = [] 
+            const map = list.reduce(
+                (res, v) => (
+                    res[v.id] = v, res
+                ), {}
+            )
+            console.log(map)
+            for (const item of list) { 
+                if (item.parentId === 0) { 
+                    res.push(item) 
+                    continue 
+                }
+                if (item.parentId in map) { 
+                    const parent = map[item.parentId] 
+                    parent.children = parent.children || [] 
+                    parent.children.push(item) 
+                } 
+            }
+            return res
+        }
+        let list_data = convert([ {id:1,name:'部门 A',parentId:0}, {id:2,name:'部门 B',parentId:0}, {id:3,name:'部门 C',parentId:1}, {id:4,name:'部门 D',parentId:1}, {id:5,name:'部门 E',parentId:2}, {id:6,name:'部门 F',parentId:3}, {id:7,name:'部门 G',parentId:2}, {id:8,name:'部门 H',parentId:4}]);
+        console.log(list_data)
+
+        function Foo() { 
+            Foo.a = function() { 
+                console.log(1); 
+            };
+            this.a = function() { 
+                console.log(2); 
+            }; 
+        }
+        Foo.prototype.a = function() { 
+            console.log(3); 
+        };
+        Foo.a = function() { 
+            console.log(4);
+        };
+        Foo.a(); 
+        let obj = new Foo(); 
+        obj.a(); 
+        Foo.a();
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        // （京东）下面代码中 a 在什么情况下会打印 1？
+        (function () {
+            var a = {
+                i: 1,
+                toString() {
+                    return a.i++;
+                }
+            };
+            if (a == 1 && a == 2 && a == 3) {
+                console.log(111);
+            };
+
+            let b11 = [1, 2, 3];
+            b11.toString = b11.shift;
+            if (b11 == 1 && b11 == 2 && b11 == 3) {
+                console.log(111);
+            };
+        })();
+
+
+
+        // 数组重排序
+        (function() {
+            const shuffle = (arr) => arr.sort(() => Math.random() - 0.5)
+            const arr = [1, 2, 3, 4, 5]
+            console.log(shuffle(arr))
+        })();
+
+
+
+        // 题库第一题（就像英语四级的 abandon）— 两数之和
+        (function() {
+            // 例1：
+            //     输入：nums = [2, 7, 11, 15], target = 9
+            //     输出：[0, 1]
+            //     解释：因为 nums[0] + nums[1] == 9 ，返回 [0, 1] 。
+            // 例2：
+            //     输入： nums = [3, 2, 4], target = 6
+            //     输出： [1, 2]
+            // 例3：
+            //     输入： nums = [3, 3], target = 6
+            //     输出： [0, 1]
+
+            // 解一：双层 for 循环暴力解法
+            const twoSum = (nums, target) => {
+                const len = nums.length
+                for (let i = 0; i < len; i++) {
+                    // 因为同一元素不允许重复出现，所以从i的下一位开始遍历
+                    for (let j = i + 1; j < len ; j++) {
+                        // find the answer, return
+                        if (nums[ i ] + nums[ j ] === target) {
+                            return [ i, j ]
+                        }
+                    }
+                }
+            }
+            // 解二：利用 map 解，降低时间复杂度
+            var twoSum2 = function(nums, target) {
+                const map = new Map();
+                for(let i = 0, len = nums.length;i < len;i++) {
+                // 一层遍历，用 target 减去每一项，在 map 的 key 中寻找
+                    if(map.has(target - nums[i])) {
+                    // 存在则返回结果
+                        return [map.get(target - nums[i]), i];
+                    }
+                    // 不存在，则设置 map key 和 val
+                    map.set(nums[i], i);
+                }
+                return [];
+            };
+        })();
+
+
+
+        // 阿里 => 自执行函数 this 无法指向 window
+        (function () {
+            var length = 1
+
+            function fn() {
+                console.log('this.length =', this.length);
+            }
+            var obj = {
+                length: 100,
+                action: function (callback) {
+                    // 输出 1 => 1
+                    // this => window => 1
+                    callback()
+
+                    // 输出 2 => 4
+                    // [fn, 1, 2, 3] => 4 => 相当于数组调用
+                    // arguments => [fn, 1, 2, 3] => this 是 arr => lenth
+                    arguments[0]()
+
+                    // 输出 3 => 1
+                    // arguments[0] => fn => 没有调用者 => this
+                    var foo = arguments[0]
+                    foo()
+
+                    // 输出 4 => 100
+                    // this => obj => 100
+                    this.foo2 = arguments[0]
+                    this.foo2()
+                }
+            }
+            var arr1 = [1, 2, 3]
+            obj.action(fn, ...arr1)
+        })();
+
+        
+
+        (function () {
+            /**
+             * arguments 与 实参 的关系
+             * 严格模式('use strict') 和 非严格模式
+             * 严格模式：arguments 和 实参 不会相互影响
+             * 非严格模式：会相互影响
+             */
+            function side(arr) {
+                // 1. 严格模式：arr 变化不会影响 abc
+                //    非严格模式：[10, 1, 10]
+                arr[0] = arr[2]
+            }
+            /*
+             * 严格模式：c = 3
+             * 非严格模式：c 不设初始值
+             */
+            function fn(a, b, c = 3) {
+                c = 10
+                side(arguments)
+                // 2. 严格模式：[1, 1, 10]
+                //    非严格模式：[10, 1, 10]
+                return a + b + c
+            }
+            // 3. 严格模式：12
+            //    非严格模式：21
+            console.log('a + b + c =', fn(1, 1, 1))
+        })();
+
+
+        
+        // 无重复字符的最长子串
+        (function() {
+            var lengthOfLongestSubstring = function(s) {
+                const map = new Map();
+                let idx = 0;
+                let num = 0;
+                for( let i = 0; i < s.length; i ++){
+                    if( map.has(s[i]) && map.get(s[i]) >= idx ){
+                        idx = map.get(s[i]) + 1;
+                    }
+                    num = Math.max( num , i+1- idx );
+                    map.set(s[i],i);
+                }
+                return num;
+            };
+            console.log(lengthOfLongestSubstring('bbbbb'), lengthOfLongestSubstring('pwwkew'), lengthOfLongestSubstring('abcabcbb')); // 1, 3, 3
+        })();
+
+
+
+        // 合并区间
+        (function() {
+            // 输入：intervals = [[1,3],[2,6],[8,10],[15,18]]
+            // 输出：[[1,6],[8,10],[15,18]]
+            // 解释：区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+            var merge = function(intervals) {
+                // 先进行排序 （区间第一个元素）从小到大
+                const sortedIntervals = intervals.sort((a, b) => a[0] - b[0]);
+                const result = [];
+                // 取出第一个区间
+                let current = sortedIntervals[0];
+                for (let i = 1; i < sortedIntervals.length; i++) {
+                    // 循环比较后面的区间
+                    const interval = sortedIntervals[i];
+                    // 如果下一个区间的最小值 存在于当前比较的区间（小于当前区间的最大值） 则合并
+                    if (interval[0] <= current[1]) {
+                        // 合并取两个区间最大值的最大者
+                        current[1] = Math.max(current[1], interval[1]); // case 1
+                    } else {
+                        // 如果不在前一个区间内 说明当前区间与下一个区间不连续 则把当前区间添加到结果集
+                        result.push(current);
+                        // 更新比较的当前区间为下一个区间
+                        current = interval; // case 2
+                    }
+                }
+                // 遍历结束之后两种情况 
+                // case 1 最后一个区间被合并，则需要将current添加到结果集
+                // case 2 最后一个区间没有被合并，也需要将current添加到结果集
+                result.push(current);
+                return result;
+            };
+            console.log(merge([[1,3],[2,6],[8,10],[15,18]]));
+        })();
+
+
+
+        // 二叉树的最小深度
+        var minDepth = function (root) {
+            if (!root) {
+                return 0;
+            }
+            const que = [
+                [root, 1]
+            ];
+            while (que.length) {
+                const [n, l] = que.shift();
+                if (!n.left && !n.right) {
+                    return l;
+                }
+                if (n.left) que.push([n.left, l + 1])
+                if (n.right) que.push([n.right, l + 1])
+            }
+        };
+        console.log(minDepth([3, 9, 20, null, null, 15, 7]));
+        console.log(minDepth([2, null, 3, null, 4, null, 5, null, 6]));
+
+    </script>
+</body>
+
+</html>

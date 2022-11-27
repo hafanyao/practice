@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>买鸡</title>
+</head>
+<body>
+    <script>
+        /*
+            100元钱，要买100只鸡
+            公鸡5元钱一只，母鸡3元钱一只，小鸡一元钱3只
+            https://blog.csdn.net/a15970673567/article/details/111088310
+        */
+        const res = []
+        for (let num = 0; num <= 3; num++){
+            console.log('---');
+            res.push(`公鸡${4 * num}只，母鸡${25 - 7 * num}，小鸡${75 + 3 * num}`);
+        }
+        console.log(res);
+
+
+        const res2 = []
+        for (let a = 0; a < (100/5); a++){
+            for (let b = 0; b < (100/3); b++){
+                let c = 100 - a - b;
+                if (c%3 === 0 && 5*a + 3*b + c/3 === 100) {
+                    res2.push(`公鸡${a}只，母鸡${b}，小鸡${c}`);
+                }
+            }
+        }
+        console.log(res2);
+
+
+        const res3 = []
+        for(let a = 0; a < 20; a++) {
+            for (let b = 0; b < 33; b++) {
+                for (let c = 0; c < 300; c++) {
+                    if(5*a + 3*b + c/3 === 100 && a + b + c === 100) {
+                        res3.push(`公鸡${a}只，母鸡${b}，小鸡${c}`);
+                    }
+                }
+            }
+        }
+        console.log(res3);
+    </script>
+</body>
+</html>

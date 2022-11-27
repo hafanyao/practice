@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkproject=self.webpackChunkproject||[]).push([[992],{648:(t,u,n)=>{function e(t){return`this is a commonFun output ${t}`}n.d(u,{Z:()=>e})},992:(t,u,n)=>{n.d(u,{Z:()=>c});var e=n(648);function c(t,u){return(0,e.Z)(t*u)}}}]);

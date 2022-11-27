@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手写题总结</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <script>
+
+        (function feibo(num) {
+            let a = 0, b = 1, c = null;
+            const res = [a, b]
+            for (let i = 0; i < num; i++) {
+                c = a + b
+                a = b
+                b = c
+                res.push(c)
+            }
+            console.log(res);
+        })(10)
+
+        // function flat1(array) {
+        //     return array.reduce((res, item) => {
+        //         return res.concat(Array.isArray(item) ? flat1(item) : item)
+        //     }, [])
+        // };
+        function flat1(array) {
+            return array.reduce((res, item) => {
+                // return res.push(typeof item === 'object' ? flat1(item) : item)
+                return res.concat(Array.isArray(item) ? flat1(item) : item)
+            }, [])
+        };
+        // function flat1(array) {
+            
+        // }
+        console.log(flat1([1, [2, 3, 4], [5, [6, [7, [8]]]]]));
+
+
+
+        const data = [{ name: 'a',
+                children: [{ name: 'a1', children: [{ name: 'a11' }, { name: 'a12' }]}, { name: 'a2' }, { name: 'a3' }],
+            },
+            { name: 'b', children: [{ name: 'b1' }, { name: 'b2' }, { name: 'b3' }] }]
+        
+        function depth(data, res = []) {
+            data.forEach(item => {
+                res.push(item.name)
+                if(item.hasOwnProperty('children')) {
+                    depth(item.children, res)
+                }
+            })
+            return res
+        }
+        // function depth(data, res = []) {
+            
+        // }
+        console.log(depth(data));
+
+
+
+        function breadth(data) {
+            const res = [], queue = [...data]
+            while(queue.length) {
+                const item = queue.shift()
+                res.push(item.name)
+                if(item.hasOwnProperty('children')) {
+                    queue.push(...item.children)
+                }
+            }
+            return res
+        }
+        // function breadth(data) {
+            
+        // }
+        console.log(breadth(data));
+
+
+
+        function debounce(handle, delay) {
+            let _timer = null
+            return function() {
+                clearTimeout(_timer)
+                _timer = setTimeout(function() {
+                    handle.apply(this, arguments)
+                    _timer = null
+                }, delay)
+            }
+        }
+        // function debounce(handle, delay) {
+            
+        // }
+
+        function throttle(handle, delay) {
+            // 时间段触发
+            let _timer = null
+            return function() {
+                if(!_timer) {
+                    _timer = setTimeout(function() {
+                        handle.apply(this, arguments)
+                        _timer = null
+                    }, delay)
+                }
+            }
+        }
+        // function throttle(handle, delay) {
+            
+        // }
+
+
+
+        function maxChar(str) {
+            const charObj = {}
+            for (let i = 0; i < str.length; i++) {
+                if(charObj[str[i]]) {
+                    charObj[str[i]] ++
+                }else {
+                    charObj[str[i]] = 1
+                }
+            }
+            let maxStr = '', maxNum = 1
+            console.log(charObj);
+            const keys = Object.keys(charObj)
+            for (const key of keys) {
+                if(charObj[key] > maxNum) {
+                    maxStr = key
+                    maxNum = charObj[key]
+                }
+            }
+            return '出现最多的字符为：' + maxStr + '，共' + maxNum + '次'
+        }
+        // function maxChar(str) {
+            
+        // }
+        console.log('---', maxChar('abca'));
+
+
+
+        console.log('------------迭代器------------');
+        // 对象遍历
+        var obj = {
+            count: 0,
+            // 迭代器：加上这个属性就代表可迭代
+            [Symbol.iterator]: () => {
+                return {
+                    next: () => {
+                        obj.count ++
+                        if(obj.count <= 3) {
+                            return {
+                                value: obj.count,
+                                done: false
+                            }
+                        } else {
+                            return {
+                                value: undefined,
+                                done: true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // obj = {
+            
+        // }
+        // 对象不能通过 for of 遍历
+        for(const item of obj) {
+            console.log(item) // 1 2 3
+        }
+
+        console.log('------------迭代器 2------------');
+        const text = { a: 1, b: 2, c: 3 }
+        text[Symbol.iterator] = function (){
+            const _this = this
+            return {
+                index: -1,
+                next(){
+                    const keys = Object.keys(_this)
+                    if(this.index < keys.length){
+                        this.index ++
+                        return {
+                            value: _this[keys[this.index]],
+                            done: false
+                        }
+                    }else {
+                        return {
+                            value: undefined,
+                            done: true
+                        }
+                    }
+                }
+            }
+        }
+        for(let i of text){
+            console.log(i) // 1 2 3 undefined
+        }
+
+
+
+        var ADD = function() {
+                // 输入：将 arguments 类数组转化为数组
+                let args = Array.from(arguments)
+                // let args = Array.prototype.slice.call(arguments)
+                // 内层处理
+                let inner = function() {
+                    // 内外层参数合并
+                    args.push(...arguments)
+                    return inner
+                }
+                // 重写函数的 toString 方法
+                inner.toString = function() {
+                    return args.reduce((pre, cur) => pre + cur)
+                }
+                return inner
+            }
+            // ADD = function() {
+                
+            // }
+            console.log('' + ADD(1, 2)(3)(4)(5, 6));
+
+
+
+        function deepClone2(target, hash = new WeakMap()) {
+            if(target === null) {
+                return null
+            }
+            if(target instanceof Date) {
+                return new Date(target)
+            }
+            if(target instanceof RegExp) {
+                return new RegExp(target)
+            }
+            if(typeof target !== 'object') {
+                return target
+            }
+            if(hash.has(target)) {
+                return hash.get(target)
+            }
+            const res = Array.isArray(target) ? [] : {}
+            hash.set(target, res)
+            Reflect.ownKeys(target).forEach(key => {
+                res[key] = deepClone2(target[key], hash)
+            })
+            return res
+        }
+        function deepClone2(target, hash = new WeakMap()) {
+            if(target === null) {
+                return null
+            }
+            if(target instanceof Date) {
+                return new Date(target)
+            }
+            if(target instanceof RegExp) {
+                return new RegExp(target)
+            }
+            if(typeof target !== 'object') {
+                return target
+            }
+            if(hash.has(target)) {
+                return hash.get(target)
+            }
+            const res = Array.isArray(target) ? [] : {}
+            hash.set(target, res)
+            Reflect.ownKeys(target).forEach(key => {
+                res[key] = deepClone2(target[key], hash)
+            })
+            return res
+        }
+
+        const target = {
+            age: 30,
+            obj: null,
+            name: "John",
+            map: new Map(),
+            set: new Set(),
+            time: new Date(),
+            arr: function() {},
+            rex: /^[\\u4e00-\\u9fa5]{0,}$/,
+            address: {
+                city: "beijing",
+            },
+            arr1: [{
+                name: 'hafanYao'
+            }]
+        };
+        const myJSON = JSON.stringify(target);
+        console.log(myJSON);
+        const myJSON2 = JSON.stringify(deepClone2(target))
+        console.log(myJSON2);
+
+
+
+        // 实现 new
+        function Father(age, name) {
+            this.age = age
+            this.name = name
+        }
+        // 方法 1 - 麓一
+        function newObj1(Father, ...args) {
+            if(typeof Father !== 'function') {
+                throw new Error('构造函数的第一个参数必须是一个函数')
+            }
+            var obj = Object.create(Father.prototype)
+            // 截取 Father 之后的所有参数
+            // console.log([666, 777, 888].slice(1))  =>  [777, 888]
+            // 简写：res = Father.apply(obj, args)
+            var res = Father.apply(obj, Array.prototype.slice.call(arguments, 1))
+            // ‘特定情况’  
+            return res && typeof res === 'object' ? res : obj
+
+            // 云隐
+            var obj = {}
+            Object.setPrototypeOf(obj, Father.prototype)
+            var res = Father.apply(obj, args)
+        }
+        function newObj2(Father, ...args) {
+            
+        }
+        console.log(newObj1(Father, '50', 'yao'));
+        console.log(newObj2(Father, '50', 'yao'));
+
+
+
+        function fn1(x){return x + 1}
+        function fn2(x){return x + 2}
+        function fn3(x){return x + 3}
+        const comps = compose(fn1, fn2, fn3)
+        console.log(comps(0)) // num + 1 + 2 + 3
+        function compose() {
+            const fns = [...arguments]
+            return start => fns.reduce((total, fn) => fn(total), start)
+        }
+        function compose() {
+            const fns = [...arguments]
+            return start => fns.reduce((total, fn) => fn(total), start)
+        }
+
+    </script>
+</body>
+
+</html>

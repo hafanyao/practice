@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+
+        /**
+         *  compose 函数
+            概念
+                1. 将需要嵌套执行的函数平铺
+                2. 嵌套执行指的是,一个函数的返回值将作为另一函数的参数
+                3. 实质是在函数式编程中,将几个具有特点的函数拼凑在一起,让他们结合,形成一个崭新的函数
+            作用
+                实现函数式编程中的 Pointfree, 使我们专注于转换而不是数据
+
+            
+         * */
+
+
+        
+        /*
+            redux 中间件源码大致是这样实现的
+            https://juejin.cn/post/6989815456416661534
+        */
+        function reduxCompose(...funcs) {
+            return funcs.reduce((a, b) => (...args) => a(b(...args)))
+        }
+
+        // 实现一个 compose 函数
+        function fn1(x){return x + 1}
+        function fn2(x){return x + 2}
+        function fn3(x){return x + 3}
+        function fn4(x){return x + 4}
+        const a = compose(fn1, fn2, fn3, fn4)
+        const b = compose2(fn1, fn2, fn3, fn4)
+        console.log(a(1)) // num + 1 + 2 + 3 + 4
+        console.log(b(1)) // num + 1 + 2 + 3 + 4
+        // 解答 1
+        function compose() {
+            // 获取所有 函数参数
+            const fns = [...arguments]
+            // x 就是上一步结果，当做参数遍历传入下一个函数并返回新的值
+            return num => fns.reduce((total, fn) => fn(total), num)
+            // return num => {
+            //     return fns.reduce((total, fn) => fn(total), num)
+            // }
+        }
+        // 解答 2
+        function compose2(...rest) {
+            return start => rest.reduce((total, item) => item(total), start)
+        }
+        /*
+            大厂 compose 可以是单独考题，代表 coder 思想 ***
+            函数编排：fn1,fn2,fn3 --> fn3(fn2(fn1(start)))
+        */
+        //              rest: [fn1, fn2, fn3]                                 fn1(start) -> res1
+        // const compose = (...rest) => start => rest.reduce((total, item) => item(total), start)
+
+
+    </script>
+</body>
+</html>

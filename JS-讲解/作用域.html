@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作用域</title>
+</head>
+
+<body>
+    <script>
+
+        // 判断数组：5 种方法
+        const obj = [1]
+        if (Array.isArray(obj)) {
+            console.log([]);
+        } else if (obj instanceof Array) {
+            console.log(['不严谨']);
+        } else if (obj.constructor === Array) {
+            console.log([]);
+        } else if (Array.prototype.isPrototypeOf(obj)) {
+            console.log([]);
+        } else if (Object.prototype.toString.call(obj) === '[object Array]') {
+            console.log([]);
+        }
+
+
+
+        /*
+            var/let/const 区别：
+            1. var 会变量提升，let/const 不会
+            2. var 可以重复声明，let/const 不能
+            3. var/let 变量可以修改，const不能
+            4. let/const 有块级作用域，var 没有
+        */
+        // 声明提升
+        console.log(name);
+        var name = 'hafan';
+
+        // 变量覆盖
+        var name2 = 'hafan1';
+        var name2 = 'hafan2';
+        console.log(name2);
+
+        // 没有块级作用域
+        function fun1 () {
+            // var 全局作用域
+            for (var index = 0; index < 3; index++) { };
+            console.log(index);
+        };
+        fun1();
+
+        function fun2 () {
+            // let 块级作用域
+            for (let index = 0; index < 3; index++) { };
+            // console.log(index); // 报错 - 因为 let
+        };
+        fun2();
+
+
+
+        // (function() {
+            console.log('--------------------------------');
+            // https://www.bilibili.com/video/BV1S3411w7Xv?p=8
+            function Foo() {
+                getName = function() {console.log(1);} // window
+                return this
+            }
+            Foo.getName = function() {console.log(2);}
+            Foo.prototype.getName = function() {console.log(3);}
+            var getName = function() {console.log(4);}
+            function getName() {console.log(5)}
+
+            console.log(window);
+            Foo.getName()
+            getName()
+            Foo().getName()
+            getName()
+            
+            new Foo().getName()
+            /*
+                new Foo() 是对象
+                Foo() 内 getName 没有 this，所以指向 window，所以 Foo() 没有 getName
+                所以去原型上找
+
+            */
+        // })()
+
+
+
+        // 头条考题
+        var o = {
+            a: 10,
+            b: {
+                fn: function() {
+                    console.log(this.a);
+                    console.log(this);
+                }
+            }
+        }
+        o.b.fn()
+
+
+
+        console.log('-----------------')
+
+        window.name = 'yao'
+        function A() {
+            this.name = 123
+        }
+        A.prototype.getA = function() {
+            console.log(this)
+            return this.name + 1
+        }
+        const a = new A()
+        // const funA = a.getA
+        // console.log(funA());
+
+        // 重点：getA 是否调用
+        const funA = a.getA()
+        funA;
+
+
+
+        console.log('-----------------')
+
+        const length = 10
+        function fn() {
+            return this.length + 1
+        }
+        const obj_1 = {
+            length: 5,
+            test1: function() {
+                return fn()
+            }
+            // test2: function() { // 隐式 test2
+            //     return this.length + 1
+            // }
+        }
+        obj_1.test2 = fn // 没有（）也就是把 fn 赋值给 test2，也就是 ‘隐式 test2’
+        // 自己猜测是 6。实际是 11，因为 return fn() 是闭包，指向 window
+        console.log(obj_1.test1()) // 11
+        console.log(fn() === obj_1.test2()) // 11 - 6
+        console.log(obj_1.test1() === obj_1.test2()) // 11 - 6
+
+    </script>
+    
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // https://mp.weixin.qq.com/s/Cw06Yg2yi4yHD1YgiAawCw
+        //************** base64编码 转换 utf-8 值 ***************//
+        function utf8_to_b64(str) {
+            return window.btoa(unescape(encodeURIComponent(str)));
+        }
+        function b64_to_utf8(str) {
+            return decodeURIComponent(escape(window.atob(str)));
+        }
+        console.log(utf8_to_b64('✓ à la mode')); // "4pyTIMOgIGxhIG1vZGU="
+        console.log(b64_to_utf8('4pyTIMOgIGxhIG1vZGU=')); // "✓ à la mode"
+
+
+
+        //************** 颜色 16进制 转换 RGB 值 ***************//
+        const rgb2hex = ([r, g, b]) =>
+        `#${(1 << 24) + (r << 16) + (g << 8) + b}`.toString(16).substr(1);
+        console.log('#' + rgb2hex([76, 11, 181]));
+        // #4c0bb5
+
+        const hex2rgb = hex =>
+        [1, 3, 5].map((h) => parseInt(hex.substring(h, h + 2), 16));
+        console.log('RGB(' + hex2rgb("#4c0bb5") + ')');
+        // [76, 11, 181]
+
+
+
+        //************** 奇/偶校验 ***************//
+        const value = 232;  
+        if (value & 1) console.log("odd");
+        else console.log("even"); // even
+
+
+        
+        //************** 检查有效URL ***************//
+        const isValidURL = (url) => {
+            try {
+                new URL(url);
+                return true;
+            } catch (error) {
+                return false;
+            }
+        };
+        isValidURL("https://dev.to"); // true
+        isValidURL("https//invalidto"); // false
+
+
+
+        //************** 查询字符串生成路径 ***************//
+        const generatePathQuery = (path, obj) =>
+            path + Object.entries(obj)
+                .reduce((total, [k, v]) => (total += `${k}=${encodeURIComponent(v)}&`), "?")
+                .slice(0, -1);
+        generatePathQuery("/user", { name: "Orkhan", age: 30 }); 
+        // "/user?name=Orkhan&age=30"
+
+        const getQueryParams = url =>
+            url.match(/([^?=&]+)(=([^&]*))/g).reduce((total, crr) => {
+                const [key, value] = crr.split("=");
+                total[key] = value;
+                return total;
+            }, {});
+        getQueryParams("/user?name=Orkhan&age=30");
+        // { name: 'Orkhan', age: '30' }
+    </script>
+</body>
+
+</html>

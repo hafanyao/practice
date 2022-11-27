@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数组遍历</title>
+</head>
+<body>
+    
+    <script>
+
+        // https://juejin.cn/post/7085164529658626061
+        /*
+            for of：不继承原型
+                    - 可遍历 数组、字符串、Set、Map 以及 Generator
+
+            for in：遍历可迭代对象，包括继承属性 - 针对对象
+                    - 对象时候 key
+                    - 数组时候 index
+
+            for...of 获取键值, for...in 获取键名;
+            for...in 会遍历对象原型链, 性能非常差不推荐使用, for...of 只遍历当前对象;
+            总结：for...in 主要为遍历对象而生, 不适用遍历数组; 
+                 for....of 可以遍历数组、类数组、字符串、Set、Map以及Generator对象
+        */
+
+        const arr = [1, 'a'];
+        const obj = {
+            a: 1,
+            b: 2
+        }
+        for (const item in arr) {
+            console.log(item);
+        }
+        console.log('---------');
+        for (const item in obj) {
+            console.log(item);
+        }
+        console.log('---------');
+        for (const item of arr) {
+            console.log(item);
+        }
+        console.log('---------');
+        // 可枚举 key，不包括继承的属性 - 有 4 个参数 ***
+        Object.keys(obj).forEach(function(key, index, arr) {
+            console.log(key, index, arr, this.name);
+        }, {name: 'yao'})
+        console.log('---------');
+        // 可枚举 key，不包括继承的属性
+        Reflect.ownKeys(obj).forEach(key => {
+            console.log(key);
+        })
+        
+
+
+        // forEach 跳出循环
+        try {
+            arr.forEach(function(item, i, arr) {
+                if(item === 1) {
+                    throw new Error('LoopTerminates')
+                }
+                // do something
+                console.log('forEach 中断', item)
+            })
+        }catch(e) {
+            console.log(e);
+            if(e.message !== 'LoopTerminates') throw e
+        }
+        /*
+            1. for循环是js提出时就有的循环方法。
+            2. forEach: 是ES5提出的，挂载在可选代对象原型上的方法，例如Array Set Map,
+                forEach是一个迭代器，负责遗历可选代范象
+                迭代悬是一种特殊对象。ES6规范中它的标志是返回对象的 next() 方法，
+                迭代行为判断在 done 之中。在不暴那内部表示的情况下，迭代器实现了遍历。
+        */
+
+
+
+        /*
+            性能：for > forEach > map
+            for 比 forEach 快 1 倍，forEach 比 map 快 20%
+            for 循环没有额外函数调用和上下文
+            forEach 函数包含了参数和上下文
+            map 会返回一个新数组，数组的创建和赋值会占用内存
+        */
+    </script>
+</body>
+</html>

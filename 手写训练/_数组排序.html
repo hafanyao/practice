@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数组排序</title>
+</head>
+
+<body>
+    <script>
+
+        // 中位数
+        // (function (arr) {
+        //     // sort: 根据码点排序：123，abc => 底层是冒泡排序
+        //     const concat = arr.sort((a, b) => a - b)
+        //     const length = concat.length
+        //     if(length % 2 === 1) {
+        //         // 如果长度是奇数
+        //         console.log("中位数为： " + (concat[(length / 2) - 0.5]))
+        //     }else {
+        //         // 如果长度是偶数
+        //         console.log("中位数为： " + (concat[length / 2] + concat[(length / 2) - 1]) / 2)
+        //     }
+        // })([1, 4, 7, 9, 2, 90])
+
+
+
+        // 冒泡排序
+        (function (array) {
+            for (let i = 0; i < array.length; i++) {
+                for (let k = 0; k < array.length; k++) {
+                    if(array[i] < array[k]) {
+                        const cur = array[i];
+                        array[i] = array[k];
+                        array[k] = cur;
+                    };
+                };
+            };
+            console.log(array);
+        })([3, 2, 5, 4, 1]);
+        
+        (function (array) {
+            for (let i = 0; i < array.length; i++) {
+                for (let j = 0; j < array.length; j++) {
+                    if(array[i] < array[j]) {
+                        const cur = array[i]
+                        array[i] = array[j]
+                        array[j] = cur
+                    }
+                }
+            }
+            console.log(array);
+        })([3, 2, 5, 4, 1]);
+
+
+
+        // 快速排序
+        (function(array) {
+            function quickSort(array) {
+                if(array.length <= 1) return array;
+                // splice：会改变原数组，返回删除项的数组
+                // 注意：splice 后数组少了一项
+                const _first = array.splice(0, 1)[0],
+                    _leftArr = [], _rightArr = []
+                for (let i = 0; i < array.length; i++) {
+                    if(array[i] <= _first) {
+                        _leftArr.push(array[i])
+                    }else {
+                        _rightArr.push(array[i])
+                    }
+                }
+                // 递归不断重复比较
+                return quickSort(_leftArr).concat([_first], quickSort(_rightArr))
+            }
+            console.log('---', quickSort(array))
+        })([-10, 10, 1, 34, 5, 1]);
+
+        (function(array) {
+            function quickSort(array) {
+                if(array.length <= 1) return array;
+                const _first = array.splice(0, 1)[0],
+                    _leftArr = [], _rightArr = [];
+                for (let i = 0; i < array.length; i++) {
+                    if(array[i] <= _first) {
+                        _leftArr.push(array[i])
+                    }else {
+                        _rightArr.push(array[i])
+                    }
+                }
+                return quickSort(_leftArr).concat([_first], quickSort(_rightArr))
+            }
+            console.log(quickSort(array))
+        })([-10, 10, 1, 34, 5, 1]);
+
+
+
+        // 插入排序
+        // 想想你是怎么打牌的就知道怎么实现插入排序
+        (function() {
+            const insertSort = (array) => {
+                for (let i = 0; i < array.length; i++) {
+                    // 认为第一个元素就是已排序的序列
+                    let index = i - 1;
+                    const curValue = array[i];
+                    // 从未排序序列中取一个元素出来，往有序序列中找到合适的位置
+                    while (i >= 0 && array[index] > curValue) {
+                        // 如果该位置比元素大则向后移动, 否则继续往前找
+                        array[index + 1] = array[index];
+                        index--;
+                    };
+                    array[index + 1] = curValue;
+                };
+                return array;
+            };
+            console.log(insertSort([-10, 10, 1, 34, 5, 1]))
+        })();
+        
+
+
+        // 选择排序
+        (function() {
+            const selectSort = (array) => {
+                const length = array.length
+                for (let index = 0; index < length; index++) {
+                    // 取出未排序的第一个元素
+                    let minIndex = index;
+                    // 遍历该元素之后的部分并进行比较
+                    for (let key = index + 1; key < length; key++) {
+                        if (array[key] < array[minIndex]) {
+                            // 如果有更小的就交换位置
+                            minIndex = key;
+                        };
+                    };
+                    if (minIndex !== index) {
+                        [array[minIndex], array[index]] = [array[index], array[minIndex]]
+                    };
+                };
+                return array;
+            };
+            console.log(selectSort([-10, 10, 1, 34, 5, 1]));
+        })();
+
+    </script>
+</body>
+
+</html>

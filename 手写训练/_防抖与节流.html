@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <!-- <script src="../../js/jquery-3.1.0.js"></script> -->
+</head>
+
+<body>
+    <input type="text">
+</body>
+<script>
+
+    /*
+        CSS 节流
+        https://juejin.cn/post/7165828047520661534
+    */
+
+    function get(fn, time) {
+        let timer = null;
+        return args => {
+            if(timer) clearTimeout(timer);
+            timer = setTimeout(fn, time)
+        }
+    };
+    function log() {
+        console.log('get');
+    };
+    document.querySelector('input').addEventListener('input', get(log, 1000));
+
+    // 1、防抖(debounce)：触发高频事件后 n 秒内函数只会执行一次，如果 n 秒内高频事件再次被触发，则重新计算时间
+    // 2、节流(throttle)：高频事件触发，但在 n 秒内只会执行一次，所以节流会稀释函数的执行频率
+    // 3、区别：防抖动是将多次执行变为最后一次执行，节流是将多次执行变成每隔一段时间执行。
+
+    function debounce(handle, delay) {
+        var _timer = null;
+        return function() {
+            // var that = this, _args = arguments;
+            clearTimeout(_timer);
+            _timer = setTimeout(function() {
+                // handle.apply(that, _args);
+                handle.apply(this, arguments);
+                _timer = null;
+            }, delay);
+        };
+    };
+
+    // 1 - 时间段首节流，马上触发，小于delay则不触发
+    function throttle(handle, delay) {
+        var lastTime = 0;
+        return function() {
+            var currentTime = new Date().getTime();
+            if(currentTime - lastTime > delay) {
+                handle.apply(this, arguments);
+                lastTime = currentTime;
+            };
+        };
+    };
+
+    // 2 - 定时器尾节流，不会马上触发，而是delay后触发
+    function throttle2(handle, delay) {
+        var _timer = null;
+        return function() {
+            const _that = this, _args = arguments;
+            if(!_timer) {
+                _timer = setTimeout(function() {
+                    handle.apply(_that, _args);
+                    _timer = null;
+                }, delay);
+            };
+        };
+    };
+
+    // 3 - 首尾节流 - 最严谨
+    function throttle3(handle, delay) {
+        let  _timer = null, _lateTime = 0;
+        return function() {
+            let _curTime = Date.now();
+            let remaining = delay - (_curTime - _lateTime);
+            const _that = this, _args = arguments;
+
+            clearTimeout(_timer);
+
+            if(remaining <= 0) {
+                handle.apply(_that, _args);
+                _lateTime = Date.now();
+            }else {
+                _timer = setTimeout(function() {
+                    handle.apply(_that, _args);
+                    _timer = null;
+                }, delay);
+            };
+        };
+    };
+
+
+</script>
+
+</html>

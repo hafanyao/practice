@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>promise all</title>
+</head>
+<body>
+    <script>
+        /*
+            一、promise.all 麓一
+        */
+        function PromiseAll(array) {
+            return new Promise((resolve, reject) => {
+                if(!(array instanceof Array)) {
+                    return reject(new Error('params is not a valid array'))
+                }
+                let count = 0
+                let resultArr = new Array(array.length)
+                for (let i = 0; i < array.length; i++) {
+                    Promise.resolve(array[i]).then(res => {
+                        count ++
+                        resultArr[i] = res
+                        if(count === array.length) resolve(resultArr)
+                    }).catch(err => reject(err))
+                }
+            })
+        }
+
+
+        // 定义一个 promise 生成器
+        const promiseGenerator = (num) => {
+            return new Array(num)
+                .fill(0)
+                .map((_, index) => 
+                    new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            resolve(index)
+                        }, Math.random() * 1000)
+                    }))
+        }
+
+        // const proAll = promiseGenerator(6)
+        // PromiseAll(proAll).then(console.log)
+            
+
+        /*
+            二、串行 - 前一个任务结束再去执行下一个
+        */
+        const promiseFuncGenerator = (num) => {
+            return new Array(num)
+                .fill(0)
+                .map((_, index) => () =>
+                    new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            resolve(index)
+                            console.log(index);
+                        }, Math.random() * 1000)
+                    }))
+        }
+        const proFuncAll = promiseFuncGenerator(6)
+        const promiseChain = (proFuncAll) => {
+            // 核心：reduce -> then 之后再返回下一个任务（item）
+            proFuncAll.reduce((total, item) => {
+                return total.then(res => {
+                    return item()
+                })
+            }, Promise.resolve(-1))
+        }
+        // promiseChain(proFuncAll)
+
+
+        /*
+            三、设计一个调度器，每次只执行固定数目的 promise
+        */
+        const promiseScheduler = (proFuncAll, limit) => {
+            if(!Array.isArray(proFuncAll)) return new Error('invalid array')
+            
+            function run() {
+                proFuncAll.shift()().then(res => {
+                    proFuncAll.length && run()
+                })
+            }
+
+            for (let i = 0; i < limit; i++) {
+                run()
+            }
+        }
+        promiseScheduler(proFuncAll, 3)
+
+
+
+
+
+        /*
+            一、promise.all 路白
+        */
+        // 方式 1
+        function PromiseAll(promiseArray) {
+            // PromiseAll 固定返回 promise，
+            // 接收两个参数 resolve、reject
+            return new Promise((resolve, reject) => {
+                // 判断参数类型
+                if(!Array.isArray(promiseArray)) {
+                    return reject(new TypeError('arguemtns must be array'))
+                }
+                let count = 0
+                const resultArr = [],
+                    promiseNum = promiseArray.length
+                for (let i = 0; i < promiseNum; i++) {
+                    /*
+                        注意数组元素类型，通过 Promise.resolve 方法，
+                        不管 promiseArray[i] 是什么格式，都会被包成 promise
+                        也就是强行将 promiseArray[i] 转成 promise
+                    */
+                    Promise.resolve(promiseArray[i])
+                        .then(val => {
+                            count ++
+                            // 不能用 push 会造成结果顺序混乱
+                            resultArr[i] = val
+                            // 用 count 计数，不能用数组长度
+                            if(count === promiseNum) resolve(resultArr)
+                        }).catch(err => 
+                            reject(err)
+                        )
+                }
+            })
+
+        }
+        // 方式 2
+        PromiseAll.prototype.all = function() {}
+        // 方式 3
+        PromiseAll.all = function() {}
+
+        // 静态方法，没有 new，方式2 是挂在原型上的所以不适合
+        PromiseAll.all([1, 2, 3])
+
+
+
+
+
+
+        /***************** 手写训练 *****************/
+        
+        // 测试
+        const pro1 = new Promise((res, rej) => {
+            setTimeout(() => {
+                res(1)
+            }, 2000)
+        })
+        const pro2 = new Promise((res, rej) => {
+            setTimeout(() => {
+                res(2)
+            }, 200)
+        })
+        const pro3 = new Promise((res, rej) => {
+            setTimeout(() => {
+                res(3)
+            }, 1000)
+        })
+
+        const proArr = [pro1, pro2, pro3]
+        function PromiseAll_222(array) {
+            return new Promise((resolve, reject) => {
+                if(!(array instanceof Array)) {
+                    return reject(new Error('params is not a valid array'))
+                }
+                let count = 0
+                let resultArr = new Array(array.length)
+                for (let i = 0; i < array.length; i++) {
+                    Promise.resolve(array[i]).then(res => {
+                        count ++
+                        resultArr[i] = res
+                        if(count === array.length) resolve(resultArr)
+                    }).catch(err => reject(err))
+                }
+            })
+        }
+        function PromiseAll_222(array) {
+            return new Promise((resolve, reject) => {
+                let count = 0;
+                const result = []
+                array.forEach((item, index) => {
+                    Promise.resolve(item).then(res => {
+                        count ++
+                        result[index] = res
+                        if(count === array.length) resolve(result)
+                    }).catch(err => {
+                        reject(err)
+                    })
+                })
+            })
+        }
+        // all
+        const proAll = PromiseAll_222(proArr).then(res => {
+            console.log('手写训练-PromiseAll === ' + res); // 3 秒后打印 [1, 2, 3]
+        })
+
+
+
+        /*
+            串行 1 ***
+            如何实现串行显示呢？只要将它们用.then链接起来就好了，
+            就是上一个 Promise.then 里面返回下一个 Promise；
+            https://blog.csdn.net/qq_45803050/article/details/123165188
+        */
+        function iteratorPromise(arr) {
+            for (let i = 0; i < arr.length; i++) {
+                arr[i].then(() => {
+                    return arr[i + 1]
+                })
+            }
+        }
+        iteratorPromise(proArr)
+
+
+        
+        // 串行 2
+        let proArr2 = [() => {
+            return new Promise(res=>{
+                setTimeout(()=>{
+                    console.log("run", Date.now());
+                    res()
+                },1000)
+            })
+            }, () => {
+            return new Promise(res=>{
+                setTimeout(()=>{
+                    console.log("run", Date.now());
+                    res()
+                },1000)
+            })
+            }, () => {
+            return new Promise(res=>{
+                setTimeout(()=>{
+                    console.log("run", Date.now());
+                    res()
+                },1000)
+            })
+        }]
+        // 方法1: 使用promise后接 then 来实现串行
+        function iteratorPromise_1(arr) {
+            let res = Promise.resolve();
+            arr.forEach(promis => {
+                res = res.then(() => promis());
+            });
+        }
+
+        // 方法2: 使用 await 来实现串行
+        function iteratorPromise_2(arr) {
+            arr.forEach(async element => await element());
+        }
+        iteratorPromise_1(proArr2)
+        iteratorPromise_2(proArr2)
+    </script>
+</body>
+</html>

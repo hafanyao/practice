@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue生命周期</title>
+</head>
+<body>
+    <div id="app">
+        <h1>{{msg}}</h1>
+        {{msg}}
+        <h2>{{str}}</h2>
+        <button style="font-size: 20px;" @click="getData">Get data</button>
+        <button style="font-size: 20px;" @click="SetData">Set data</button>
+        <button style="font-size: 20px;" @click="getEl">Get element</button>
+        <button style="font-size: 20px;" @click="bindEvent">Event bind</button>
+        <br/>
+        <h2>
+            <span>{{model}}</span>
+            <input style="font-size: 22px;" type="text" v-model="model">
+        </h2>
+        
+    </div>
+    <!-- https://www.bilibili.com/video/BV1934y1H7r8/?spm_id_from=autoNext -->
+    <script src="./index.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                msg: '模板解析',
+                str: 'hello yao',
+                model: '双向绑定'
+            },
+            beforeCreate() {
+                // el/data 都不能访问
+                console.log('beforeCreate', this.$el, this.$data);
+            },
+            created() {
+                // data 可以访问
+                console.log('created', this.$el, this.$data);
+            },
+            beforeMount() {
+                console.log('beforeMount', this.$el, this.$data);
+            },
+            mounted() {
+                // el 可以访问
+                console.log('mounted', this.$el, this.$data);
+            },
+            methods: {
+                getEl(e) {
+                    console.log(e)
+                },
+                getData() {
+                    console.log(this)
+                    console.log(this.msg)
+                    console.log(this.$data.msg)
+                },
+                SetData() {
+                    this.msg = 'set Data'
+                },
+                bindEvent(e) {
+                    alert('事件绑定成功')
+                }
+            }
+        })
+    </script>
+</body>
+</html>

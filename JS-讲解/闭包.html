@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <!-- <script src="../../js/jquery-3.1.0.js"></script> -->
+</head>
+
+<body>
+    <img src="../images/闭包-1.png" style="width: 1000px;">
+    <button onclick="kill()">销毁闭包</button>
+</body>
+<script>
+    /**
+     *  https://zhuanlan.zhihu.com/p/22486908
+     *  什么是闭包：形成不销毁的私有作用域，延长变量生命周期
+     *           （即使上下文被销毁了它仍然存在）
+     * 
+     *  路白：指那些能够访问自由变量的函数，
+     *       自由变量是指在函数中使用的，但既不是函数参数也不是函数局部变量的变量
+     * 
+     *  经典应用场景：vue-data，防抖/节流，自执行函数，模块化，柯里化函数
+     * 
+     *  闭包特性：
+     *      1）函数嵌套函数
+     *      2）创建私有变量，延长变量生命周期
+     *      3）参数和变量不会被垃圾回收机制回收
+     *      4）内部函数可以访问外部函数的‘局部变量’
+     * 
+     *  AO：active object - 临时变量对象
+     *  全局变量：系统不知道什么时候该回收
+     * */
+
+    /*
+        是一个函数，加上到创建函数的作用域的连接，闭包‘关闭’了函数的自由变量
+        闭包就是能够读取其他函数内部变量的函数，
+        或者子函数在外调用， 子函数所在的父函数的作用域不会被释放。
+        使用闭包主要是为了设计私有的方法和变量。闭包的优点是可以避免全局变量的污染，缺点是闭包会常
+        驻内存，会增大内存使用量，使用不当很容易造成内存泄露。在js中，函数即闭包，只有函数才会产生
+
+        优点：
+            a. 内部函数可以访问外部函数的局部变量
+        缺点：
+            a. 变量会常驻内存中，造成内存损耗问题
+    */
+
+    // 模块化经典案例
+    let makeCounter = function() {
+        let num = 1;
+        function handle(val) {
+            num += val;
+        };
+        return {
+            add: function() {
+                handle(1);
+            },
+            reduce: function() {
+                handle(-1);
+            },
+            get: function() {
+                return num;
+            }
+        };
+    };
+    let make1 = makeCounter(); // 创建独立闭包，面向对象思想
+    let make2 = makeCounter();
+    make1.add();
+    make1.add();
+    make2.add();
+    make2.reduce();
+    console.log(make1.get());
+    console.log(make2.get());
+
+
+
+    console.log('----------------');
+    function outer() {
+        var n = 1;
+        // 不知道 fun 什么时候使用 n，所以系统不会回收
+        return function() {
+            console.log(n++);
+        };
+    };
+    var getNum = outer();
+    getNum();
+    getNum();
+    n = 1;
+    getNum();
+    getNum();
+
+    
+
+    // 创建闭包最常见的方式函数作为返回值
+    function foo() {
+        var name = "kebi";
+        return function () {
+            console.log(name);
+        };
+    }
+    var bar = foo();
+    bar(); // kebi - 外部函数访问内部变量
+
+
+
+    console.log('console.log("4F", 16) =', parseInt("4F", 16));
+
+
+    
+    /**
+    *  真实的获取多个元素并添加点击事件
+    **/
+    var op = document.querySelectorAll("p");
+    for (var j = 0; j < op.length; j++) {
+        op[j].onclick = function () {
+            alert(j);
+        };
+    }
+    // alert出来的值是一样的
+    // 解决办法一:
+    for (var j = 0; j < op.length; j++) {
+        (function (j) {
+            op[j].onclick = function () {
+                alert(j);
+            };
+        })(j);
+    }
+    // 解决办法二:
+    for (var j = 0; j < op.length; j++) {
+        op[j].onclick = (function (j) {
+            return function () {
+                alert(j);
+            };
+        })(j);
+    }
+    // 解决方法三其实和二类似
+    for (var j = 0; j < op.length; j++) {
+        op[j].onclick = (function () {
+            var temp = j;
+            return function () {
+                alert(j);
+            };
+        })();
+    }
+
+
+
+    /**
+    *  计数器使用闭包;
+    **/
+    // function addCount() {
+    //     var conut = 0;
+    //     return function () {
+    //         count = count + 1;
+    //         console.log(count);
+    //     };
+    // }
+    // var fun1 = addCount();
+    // fun1(); //1
+    // fun1(); //2
+    // var fun2 = addCount();
+    // fun2(); //1
+    // fun2(); //2
+
+
+
+    function closure() {
+        console.log('--------123--------');
+        let myArr = [];
+        function MyObj() {};
+        for (let i = 0; i < 100000; i++) {
+            // console.log(i);
+            myArr.push(MyObj);
+        };
+        // 调试技巧，innerFn 方便查看函数名称
+        let innerFn = function innerFn() {
+            return myArr;
+        };
+        // fn(); // 触发闭包形成
+        return innerFn;
+    };
+    // 调用 -> 触发闭包 -> 闭包形成的函数指向向外暴露，值不为空 所以可以查看
+    // let ff = closure();
+    function kill() { ff = null };
+
+</script>
+
+</html>

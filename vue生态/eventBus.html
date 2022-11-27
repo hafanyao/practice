@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 兄弟组件通信: eventBus; vuex
+        // 跨级通信: eventBus; Vuex; provide/inject; listeners
+        // 父子组件通信: props/$emit; $children/$parent; provide/inject; ref/refs; v-model; listeners
+
+        // 1 --- 中央事件总线插件
+        // vue-bus.js
+        const install = function (Vue) {
+            const Bus = new Vue({
+                methods: {
+                    emit(event, ...args) {
+                        this.$emit(event, ...args);
+                    },
+                    on(event, callback) {
+                        this.$on(event, callback);
+                    },
+                    off(event, callback) {
+                        this.$off(event, callback)
+                    }
+                }
+            })
+            Vue.prototype.$bus = Bus;
+        }
+        export default install;
+
+
+
+        // 2 --- 在main.js全局引用即可全局使用
+        import VueBus from './vue-bus'
+        Vue.use(VueBus)
+
+
+
+        // 3 --- 使用方式:
+        // 发送
+        this.$bus.emit('事件名称', {
+            // 参数
+        })
+        // 监听
+        this.$bus.on('事件名称', param => {
+            // 回调接收参数
+        })
+        // 销毁
+        this.$bus.off('事件名称', {})
+
+
+        // 云隐 - 插件
+        // export default {
+        //     install: (Vue) => {
+        //         Vue.globalMethod = function() {
+
+        //         }
+        //         Vue.derective = ('my-derective', {
+        //             bind(el, binding, vnode) {},
+        //             inserted(el, binding, vnode) {},
+        //             update(el, binding, vnode) {},
+        //             componentUpdated(el, binding, vnode) {},
+        //             unbind(el, binding, vnode) {}
+        //         })
+        //         Vue.mixin({
+        //             created() {
+
+        //             }
+        //         })
+        //     }
+        // }
+
+        
+    </script>
+</body>
+
+</html>

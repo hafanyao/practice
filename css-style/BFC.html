@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFC及适配方案</title>
+    <style>
+        * {
+            margin: 0;
+        }
+        section {
+            margin-bottom: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- BFC的使用场景 -->
+    <!-- 1-可以用来自适应布局 -->
+    <!-- BFC不与float重叠 -->
+    <section id="layout">
+        <style media="screen">
+            #layout {
+                background: red;
+            }
+
+            #layout .left {
+                float: left;
+                width: 100px;
+                height: 100px;
+                background: green;
+            }
+
+            #layout .right {
+                height: 150px;
+                background: rgb(0, 0, 0, .5);
+                overflow: auto;
+            }
+        </style>
+        <div class="left"></div>
+        <div class="right"></div>
+        <!-- 利用BFC的这一个原理就可以实现两栏布局，左边定宽，右边自适应。不会相互影响，哪怕高度不相等。 -->
+    </section>
+
+
+
+    <!-- 2-可以清除浮动：（塌陷问题） -->
+    <!-- BFC子元素即使是 float 也会参与计算 -->
+    <section id="float">
+        <style media="screen">
+            #float {
+                background: #434343;
+                overflow: auto;
+            }
+
+            #float .float {
+                float: left;
+                font-size: 30px;
+                background-color: green;
+            }
+        </style>
+        <div class="float">我是浮动元素</div>
+    </section>
+
+    <div></div>
+
+    <!-- 3-解决垂直边距重叠 -->
+    <section id="margin">
+        <style>
+            #margin {
+                background: pink;
+                overflow: hidden;
+            }
+
+            #margin>p {
+                margin: 5px auto 25px;
+                background: red;
+            }
+
+            #margin>div>p {
+                margin: 5px auto 20px;
+                background: red;
+            }
+        </style>
+        <p>1</p>
+        <div style="overflow:hidden">
+            <p>2</p>
+        </div>
+        <p>3</p>
+        <!-- 这样就会出现第一个p标签的margin-bottom不会和第二个p标签的margin-top重叠，这也是BFC元素的另一个原则，不会影响到外边的box，是一个独立的区域。 -->
+    </section>
+
+</body>
+
+</html>

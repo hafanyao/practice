@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手写观察者</title>
+</head>
+<body>
+    <script>
+        class Notify {
+            constructor() {
+                this.observerList = []
+            }
+            add(obj) {
+                this.observerList.push(obj)
+            }
+            remove(obj) {
+                const idx = this.observerList.findIndex(v => v === obj)
+                if (idx !== 1) {
+                    this.observerList.splice(idx, 1)
+                }
+            }
+            notify() {
+                this.observerList.forEach(item => {
+                    item.update()
+                })
+            }
+        }
+        class Watch {
+            constructor(name) {
+                this.name = name
+            }
+            update() {
+                console.log(this.name);
+            }
+        }
+    </script>
+</body>
+</html>

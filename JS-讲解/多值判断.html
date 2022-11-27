@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多值判断</title>
+</head>
+<body>
+    
+    <script>
+
+        // JavaScript 中第一个对象的原型指向 null 。
+        Object.getPrototypeOf(Object.prototype)  // null
+
+
+        console.log('0 == "": ', 0 == '')
+        console.log('0 === "": ', 0 === '')
+        console.log('0 == "0": ', 0 == '0')
+        console.log('0 === "0": ', 0 === '0')
+        console.log('NaN == NaN: ', NaN == NaN)
+        console.log('0 == false: ', 0 == false)
+        console.log('0 === false: ', 0 === false)
+        console.log('null == null: ', null == null);
+        console.log('null == undefined: ', null == undefined)
+        console.log('Infinity +1 === Infinity: ', Infinity + 1 === Infinity)
+
+        console.log('============================')
+
+        console.log(1 == '1')
+        console.log(true == 1)
+        console.log(null == undefined)
+        console.log([1, 2] == '1,2')
+
+
+        Number(null)  // 0
+        let b = null + 1  // 1
+        Number(undefined)  // NaN
+        let a = undefined + 1  // NaN
+        console.log(typeof NaN) // number
+
+
+        console.log('============================')
+        // true
+        console.log('null === null: ', null === null)
+        console.log('!!null === !!undefined: ', !!null === !!undefined)
+
+    
+    </script>
+</body>
+</html>

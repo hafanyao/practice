@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    // 使用 ES6 的 class
+    // 虽然 ES6 的 class 和使用 function 的 prototype 本质上是一样的，
+    // 都是用的原型。但是用 class 可以减少代码量，同时让代码看起来更加地高大上，
+
+    // 使用 function 要写这么多：
+    /** 特点：
+        属性和原型的方法定义是被分开的；
+        原型上的成员可以被遍历；
+        函数的两面性；
+    **/ 
+    function Person(name, age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    Person.prototype.addAge = function () {
+        this.age ++;
+    };
+
+    Person.prototype.setName = function (name) {
+        this.name = name;
+    };
+    
+    // 使用 class 代码看加地简洁易懂：
+    /** 特点：
+        类的声明不会被提升；
+        所有代码均在严格模式下执行；
+        类的所有原型方法不可被遍历；
+        类的构造函数必需使用构造器；
+        所有方法均不可被当作构造函数使用；
+    **/ 
+    class Person2 {
+        constructor(name, age) {
+            this.name = name;
+            this.age = age;
+        }
+        addAge() {
+            this.age ++;
+        }
+        setName(name) {
+            this.name = name;
+        }
+    }
+</script>
+
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手写promise - 云隐</title>
+</head>
+<body>
+    <script>
+        /*
+            2022-03-25 promise 规范及应用-云隐
+
+            1. promise 有哪些状态？对应值有哪些 -  pending / fulfilled / rejected
+            2. new Promise 会返回一个执行器 - executor()，接收参数：resolve / reject
+            3. promise的默认状态是？promise状态的流转 - 默认 pending，p - f，p - r
+            4. promise，value保存成功状态的枚举？- undefined / thenable / promise
+            5. promise，失败状态值？- reason 保存失败，描述 promise 接口
+            6. promise一定会有then - 两个回调onFulfilled(value) / onRejected(reason)
+        */
+
+        const PENDING = 'PENDING',
+            FULFILLED = 'FULFILLED',
+            REJECTED = 'REJECTED'
+
+        /* 只支持同步代码 */
+        class myPromise {
+
+            // 构造
+            constructor(executor) {
+
+                this.status = PENDING // 默认状态
+                this.value = undefined // 成功的值
+                this.reason = undefined // 失败的值
+
+                /*
+                    resolve和reject为什么要用箭头函数？
+                    如果直接调用的话，普通函数this指向的是window或者undefined
+                    用箭头函数就可以让this指向当前实例对象成功之后的值
+                */
+                // 成功状态回调
+                let resolve = value => {
+                    if (this.status === PENDING) {
+                        this.value = value
+                        this.status = FULFILLED
+                    }
+                }
+
+                // 失败状态回调
+                let reject = reason => {
+                    if (this.status === PENDING) {
+                        this.reason = reason
+                        this.status = REJECTED
+                    }
+                }
+
+                try {
+                    executor(resolve, reject)
+                } catch (error) {
+                    reject(error)
+                }
+            }
+
+            // 判断状态机的流转
+            then(onFulfilled, onRejected) {
+                if (this.status === FULFILLED) {
+                    onFulfilled(this.value)
+                }
+                if (this.status === REJECTED) {
+                    onRejected(this.reason)
+                }
+            }
+
+            catch(onRejected) {
+                return this.then(null, onRejected)
+            }
+
+        }
+
+
+        /*
+            异步 
+            区别：promise 在调用 then 的时候，
+                当前的 promise 可能并没有成功，可能还在 pending 状态，
+                所以当状态还是 pending 的时候我们需要把’成功和失败‘保存一下用作后续执行
+                此时我们就需要一个 queue
+        */
+        class myPromise2 {
+            constructor(executor) {
+                this.status = PENDING
+                this.value = undefined
+                this.reason = undefined
+                // 存放成功的回调
+                this.onResolvedCallbacks = []
+                // 存放失败的回调
+                this.onRejectedCallbacks = []
+
+                let resolve = (value) => {
+                    if (this.status === PENDING) {
+                        this.value = value
+                        this.status = FULFILLED
+                        // 依次将对应的函数执行
+                        this.onResolvedCallbacks.forEach(fn => fn())
+                    }
+                }
+
+                let reject = (reason) => {
+                    if (this.status === PENDING) {
+                        this.reason = reason
+                        this.status = REJECTED
+                        // 依次将对应的函数执行
+                        this.onRejectedCallbacks.forEach(fn => fn())
+                    }
+                }
+
+                try {
+                    executor(resolve, reject)
+                } catch (error) {
+                    reject(error)
+                }
+            }
+
+            then(onFulfilled, onRejected) {
+                if (this.status === FULFILLED) {
+                    onFulfilled(this.value)
+                }
+
+                if (this.status === REJECTED) {
+                    onRejected(this.reason)
+                }
+
+                if (this.status === PENDING) {
+                    // 如果promise的状态是 pending，需要将 onFulfilled 和 onRejected 函数存放起来，等待状态确定后，再依次将对应的函数执行
+                    this.onResolvedCallbacks.push(() => {
+                        onFulfilled(this.value)
+                    })
+
+                    // 如果promise的状态是 pending，需要将 onFulfilled 和 onRejected 函数存放起来，等待状态确定后，再依次将对应的函数执行
+                    this.onRejectedCallbacks.push(() => {
+                        onRejected(this.reason)
+                    })
+                }
+            }
+
+            catch(onRejected) {
+                return this.then(null, onRejected)
+            }
+        }
+
+
+        class myPromise3 {
+            constructor(executor) {
+                this.status = PENDING
+                this.value = undefined
+                this.reason = undefined
+                this.onResolvedCallbacks = []
+                this.onRejectedCallbacks = []
+
+                const resolve = value => {
+                    if(this.status === PENDING) {
+                        this.value = value
+                        this.status = FULFILLED
+                    }
+                    (this.onResolvedCallbacks || []).forEach(fn => fn())
+                }
+                const reject = reason => {
+                    if(this.status === PENDING) {
+                        this.reason = reason
+                        this.status = REJECTED
+                    }
+                    (this.onRejectedCallbacks || []).forEach(fn => fn())
+                }
+
+                try {
+                    executor(resolve, reject)
+                }catch (err) {
+                    reject(err)
+                }
+            }
+            then(onFulfilled, onRejected) {
+                if(this.status === FULFILLED) {
+                    onFulfilled(this.value)
+                }
+                if(this.status === REJECTED) {
+                    onRejected(this.reason)
+                }
+                if(this.status === PENDING) {
+                    this.onResolvedCallbacks.push(() => {
+                        onFulfilled(this.value)
+                    })
+                    this.onRejectedCallbacks.push(() => {
+                        onRejected(this.reason)
+                    })
+                }
+            }
+            catch(onRejected) {
+                return this.then(null, onRejected)
+            }
+        }
+        myPromise.prototype.finally = function (callback) {
+            const P = this.constructor; 
+            return this.then( 
+                value => P.resolve(
+                    callback()
+                ).then(() => value),
+                reason => P.resolve(
+                    callback()
+                ).then(() => { 
+                    throw reason
+                }) 
+            ); 
+        };
+        myPromise3.prototype.finally = function(callback) {
+            const P = this.constructor
+            return this.then(
+                value => P.resolve(
+                    callback()
+                ).then(() => value),
+                reason => P.resolve(
+                    callback()
+                ).then(() => {
+                    throw reason
+                })
+            )
+        }
+
+        /*
+            启示：同步 => 异步，其实就是处理顺序和空间的关系
+        */
+
+        const _Promise = new myPromise((resolve, reject) => {
+            reject('faild')
+            // resolve('success')
+        }).then(data => {
+            console.log(data)
+        }, err => {
+            console.log(err)
+        })
+
+
+        const _Promise2 = new myPromise3((resolve, reject) => {
+            setTimeout(() => {
+                resolve('成功')
+            }, 1000)
+        }).then(
+            data => {
+                console.log('success', data)
+            },
+            err => {
+                console.log('faild', err)
+            }
+        )
+    </script>
+</body>
+</html>

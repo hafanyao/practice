@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定时器</title>
+</head>
+
+<body>
+    <script>
+        // setTimeout 实现 setInterval - 1
+
+        let timerId = null;
+
+        function mockSetInterval(fn, delay, ...args) {
+            const recursion = function () {
+                timerId = setTimeout(() => {
+                    fn.apply(this, args);
+                    recursion();
+                }, delay);
+            };
+            recursion();
+        };
+
+        function mockClearInterval(id) {
+            clearTimeout(id);
+        };
+
+        mockSetInterval((name) => {
+            console.log(name);
+        }, 1000, 'hafan');
+
+        setTimeout(() => {
+            mockClearInterval(timerId);
+        }, 4004);
+
+
+        // setTimeout 模拟 setInterval - 2
+        // 描述： 使用 setTimeout 模拟实现 setInterval 的功
+        // 思路： 当然这里不是完全的实现，比如 setInterval 执行之后得到的是一个数字 id，
+        // 这一点我们就不模拟了，关闭定时器的方法则通过返回一个函数来进行
+        const simulateSetInterval = (func, timeout) => {
+            let timer = null
+            const interval = () => {
+                timer = setTimeout(() => {
+                    // timeout 时间之后会执行真正的函数 func
+                    func()
+                    // 同时再次调用 interval 本身，是不是有点 setInterval 的感觉啦
+                    interval()
+                }, timeout)
+            }
+            // 开始执行
+            interval()
+            // 返回用于关闭定时器的函数
+            return () => clearTimeout(timer)
+        }
+
+        const cancel = simulateSetInterval(() => {
+            console.log(1)
+        }, 300)
+
+        setTimeout(() => {
+            cancel()
+            console.log('一秒之后关闭定时器')
+        }, 1000)
+
+
+        // setInterval 模拟 setTimeout
+        // 描述： 使用 setInterval 模拟实现 setTimeout 的功能
+        // 思路： setTimeout 的特性是在指定的时间内只执行一次，
+        // 我们只要在 setInterval 内部执行 callback 之后，把定时器关掉即可
+        const simulateSetTimeout = (fn, timeout) => {
+            let timer = null
+
+            timer = setInterval(() => {
+                // 关闭定时器，保证只执行一次fn，也就达到了 setTimeout 的效果了
+                clearInterval(timer)
+                fn()
+            }, timeout)
+            // 返回用于关闭定时器的方法
+            return () => clearInterval(timer)
+        }
+        // 一秒后打印出1
+
+
+
+        for (let index = 0; index <= 3; index++) {
+            setTimeout(function () {
+                console.log(index);
+            }, 0);
+        };
+
+        for (var index = 0; index <= 3; index++) {
+            setTimeout(function () {
+                console.log(index);
+            }, 0);
+        };
+
+        /**
+        *  常见面试题
+        **/
+        // for 循环中打印
+        for (var i = 0; i < 4; i++) {
+            setTimeout(function () {
+                console.log(i);
+            }, 300);
+        };
+
+        for (var i = 0; i < 4; i++) {
+            setTimeout((function () {
+                return function() {
+                    console.log(i);
+                }
+            })(i), 300);
+        };
+
+
+        // 上边打印出来的都是 4, 原因:js 执行的时候首先会先执行主线程,
+        // 异步相关的会存到异步队列里,当主线程执行完毕开始执行异步队列,
+        // 主线程执行完毕后,此时 i 的值为 4,
+        // 说以在执行异步队列的时候,打印出来的都是 4(这里需要大家对 event loop 有所了解(js 的事件循环机制))
+
+        // 如何修改使其正常打印:(使用闭包使其正常打印)
+        // 方法一:
+        for (var i = 0; i < 4; i++) {
+            setTimeout(
+                (function (i) {
+                    return function () {
+                        console.log(i);
+                    };
+                })(i),
+                300
+            );
+        }
+        // 或者
+        for (var i = 0; i < 4; i++) {
+            setTimeout(
+                (function () {
+                    var temp = i;
+                    return function () {
+                        console.log(temp);
+                    };
+                })(),
+                300
+            );
+        }
+        // 这个是通过自执行函数返回一个函数,然后在调用返回的函数去获取自执行函数内部的变量,此为闭包
+
+
+        
+        // 方法发二:
+        for (var i = 0; i < 4; i++) {
+            (function (i) {
+                setTimeout(function () {
+                    console.log(i);
+                }, 300);
+            })(i);
+        }
+        // 大部分都认为方法一和方法二都是闭包,我认为方法一是闭包,
+        // 而方法二是通过创建一个自执行函数,使变量存在这个自执行函数的作用域里
+
+
+
+        // 3.闭包的缺陷: 闭包会导致内存占用过高,因为变量都没有释放内存，容易泄漏
+        for(var i = 0; i <=3; i++) {
+            setTimeout(
+                (function(i) {
+                    return function() {
+                        console.log(i);
+                    }
+                })(i),
+                300
+            );
+        };
+
+        for(var i = 0; i < 4; i++){
+            setTimeout(
+                (
+                    function() {
+                        var current = i;
+                        return function() {
+                            console.log(current);
+                        }
+                    }
+                )(),
+                300
+            );
+        };
+    </script>
+</body>
+
+</html>

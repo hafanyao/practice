@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创建对象</title>
+</head>
+<body>
+    <script>
+        // 1. 工厂模式 *****************************************/
+        // 解决了创建多个相似对象的问题，但没有解决对象识别的问题
+        function createPerson (name, age, job) {
+            var o = {
+                name: name,
+                age: age,
+                job: job,
+                sayName: function () {
+                    alert(this.name);
+                }
+            }
+            return o;
+        }
+        var person1 = createPerson('Stan', 25, 'Web front-ender');
+        var person2 = createPerson('Danny', 18, 'backender');
+
+
+
+        // 2. 构造函数模式 *****************************************/
+        // 解决了对象类型识别的问题，但不同实例的方法并不是同一个Function实例
+        function Person (name, age, job) {
+            this.name = name;
+            this.age = age;
+            this.job = job;
+            this.sayName = function () {
+                alert(this.name);
+            }
+        }
+        var person1 = new Person('Stan', 25, 'Web front-ender');
+        var person2 = new Person('Danny', 18, 'backender');
+        person1.sayName === person2.sayName // false
+        
+        // 把函数定义从构造函数里移出来，解决了同一个函数的问题，但全局函数的存在让其毫无封装性可言
+        function Person (name, age, job) {
+            this.name = name;
+            this.age = age;
+            this.job = job;
+            this.sayName = sayName
+        }
+        function sayName () {
+            alert(this.name);
+        }
+        var person1 = new Person('Stan', 25, 'Web front-ender');
+        var person2 = new Person('Danny', 18, 'backender');
+        person1.sayName === person2.sayName // true
+
+
+
+        // 3. 原型模式 *****************************************/
+        function Person () {};
+        Person.prototype.name = "Nicholas"; 
+        Person.prototype.age = 29; 
+        Person.prototype.job = "Software Engineer"; 
+        Person.prototype.sayName = function(){ 
+            alert(this.name); 
+        }; 
+        var person1 = new Person(); 
+        person1.sayName(); //"Nicholas" 
+        var person2 = new Person();
+        person2.sayName(); //"Nicholas" 
+        alert(person1.sayName == person2.sayName); //true 
+
+        // 确定函数原型对象和实例之间的关系
+        alert(Person.prototype.isPrototypeOf(person1)); //true 
+        alert(Person.prototype.isPrototypeOf(person2)); //true 
+        // es5
+        alert(Object.getPrototypeOf(person1) == Person.prototype); //true 
+        alert(Object.getPrototypeOf(person1).name); //"Nicholas" 
+
+        // 对象实例添加的同名属性会屏蔽对象实例的原型对象中的属性，因为属性值会先从对象实例的属性里面查找，找不到才会去原型对象里面去找，想解除屏蔽，只有delete掉那个属性
+        // 在chrome59中可以通过修改person1.__proto__对象改变原型对象的值，与红宝书所说不符
+        person1.name = "Greg"; 
+        alert(person1.name); //"Greg"——来自实例
+        alert(person2.name); //"Nicholas"——来自原型
+        delete person1.name; 
+        alert(person1.name); //"Nicholas"——来自原型
+
+        // 判断属性是不是对象实例的
+        alert(person1.hasOwnProperty("name")); //false 
+        person1.name = "Greg"; 
+        alert(person1.name); //"Greg"——来自实例
+        alert(person1.hasOwnProperty("name")); //true 
+        alert(person2.name); //"Nicholas"——来自原型
+        alert(person2.hasOwnProperty("name")); //false 
+        delete person1.name; 
+        alert(person1.name); //"Nicholas"——来自原型
+        alert(person1.hasOwnProperty("name")); //false 
+
+        // in操作符单独使用可以用来判断某属性是否存在于对象实例或原型对象中
+        alert('name' in person1)
+
+        // for-in循环返回的是所有能够通过对象访问的、可枚举的（enumerated）属性，其中既包括存在于实例中的属性，也包括存在于原型中的属性
+        person1.age = 20;
+        for (let k in person1) {
+            console.log(k + ':' + person1[k])
+        }
+
+        // 想要获取对象上所有可枚举的实例属性，可以使用Object.keys()
+        var keys = Object.keys(Person.prototype); 
+        alert(keys); //["name", "age", "job", "sayName"]
+        var p1 = new Person(); 
+        p1.name = "Rob"; 
+        p1.age = 31; 
+        var p1keys = Object.keys(p1); 
+        alert(p1keys); //["name", "age"]
+
+        // 想要获取对象上所有实例属性，无论是否是可枚举的，可以用Object.getOwnPropertyNames()，__proto__获取不到
+        var keys = Object.getOwnPropertyNames(Person.prototype); 
+        alert(keys); //["constructor", "name", "age", "job", "sayName"]
+
+        /*
+        * 原型的动态性
+        */
+        // 即使创建实例在添加方法之前，但只要调用放在后面，都可以成功执行
+        var friend = new Person(); 
+        Person.prototype.sayHi = function(){ 
+            alert("hi"); 
+        }; 
+        friend.sayHi(); //"hi"（没有问题！）
+
+        // 但是重写整个原型对象的话就不一样了，这时现有实例的__proto__属性值指向的是以前的原型对象，而以前的原型对象是没有sayName方法的
+        function Person(){} 
+        var friend = new Person(); 
+        Person.prototype = { 
+            constructor: Person, 
+            name : "Nicholas", 
+            age : 29, 
+            job : "Software Engineer", 
+            sayName : function () { 
+                alert(this.name); 
+            } 
+        }; 
+        friend.sayName(); //error 
+
+        /*
+        * 原生对象的原型
+        */
+        // 虽然可以给原生构造函数的原型对象添加方法，但不推荐在生产环境使用，有可能命名冲突
+
+        /*
+        * 原型模式的缺点
+        */
+        // 原型模式的优势在于共享，但缺点也是由于共享导致的。如下，引用类型使得对一个实例的值做出改变，其他所有实例的值都会发生改变
+        function Person(){} 
+        Person.prototype = { 
+            constructor: Person, 
+            name : "Nicholas", 
+            age : 29, 
+            job : "Software Engineer", 
+            friends : ["Shelby", "Court"], 
+            sayName : function () { 
+                alert(this.name); 
+            } 
+        }; 
+        var person1 = new Person(); 
+        var person2 = new Person(); 
+        person1.friends.push("Van"); 
+        alert(person1.friends); //"Shelby,Court,Van" 
+        alert(person2.friends); //"Shelby,Court,Van" 
+        alert(person1.friends === person2.friends); //true
+
+
+
+        // 4. 构造函数模式 + 原型模式 *****************************************/
+        // 将和数值有关的放在构造函数里面，将方法放在原型对象里面
+        function Person(name, age, job){ 
+            this.name = name; 
+            this.age = age; 
+            this.job = job; 
+            this.friends = ["Shelby", "Court"]; 
+        } 
+        Person.prototype = { 
+            constructor : Person, 
+            sayName : function(){ 
+                alert(this.name); 
+            } 
+        } 
+        var person1 = new Person("Nicholas", 29, "Software Engineer"); 
+        var person2 = new Person("Greg", 27, "Doctor"); 
+        person1.friends.push("Van"); 
+        alert(person1.friends); //["Shelby", "Court", "Van"]
+        alert(person2.friends); //["Shelby", "Court"]
+        alert(person1.friends === person2.friends); //false 
+        alert(person1.sayName === person2.sayName); //true 
+    </script>
+</body>
+</html>

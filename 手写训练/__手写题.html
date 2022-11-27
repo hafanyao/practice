@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手写题总结</title>
+</head>
+
+<body>
+    <input type="text" id="input1" placeholder="防抖-1">
+    <input type="text" id="input2" placeholder="节流-1">
+    <input type="text" id="input3" placeholder="节流-2">
+    <script>
+        /*
+            题目汇总
+            https://www.cnblogs.com/maoqiaoyu123/p/7977963.html
+        */ 
+        console.log(location.search)
+
+        function getQueryString(key) {
+            const urlSP = new URLSearchParams(location.search);
+            return urlSP.get(key)
+        };
+
+        function getQueryString2(key) {
+            const urlObj = new URL(location.href);
+            return urlObj.searchParams.get(key)
+        };
+        // const log = console.log;
+        // getQueryString
+
+        // console.log("pid", getQueryString("pid")); // pid 10
+        // console.log("cid", getQueryString2("cid")); // cid null
+
+
+
+        // reduce 实现 map / reduce
+        (function() {
+            Array.prototype.Mmap = function (fn, thisArg) {
+                const result = [];
+                this.reduce((prev, curr, index, array) => {
+                    result[index] = fn.call(thisArg, array[index], index, array);
+                }, 0);
+                return result;
+            };
+
+            Array.prototype.myReduce = function (cb, initValue) {
+                const array = this; // 获取数组
+                let pre = initValue || array[0];
+                const startIndex = initValue ? 1 : 0;
+                for (let i = startIndex; i < array.length; i++) {
+                    const cur = array[i];
+                    pre = cb(pre, cur, i, array);
+                }
+                return pre;
+            };
+        })();
+
+
+
+        // 使定时器没回调
+        (function() {
+            console.log(0);
+            await delay(1000);
+            console.log(1);
+            const delay = (time) => new Promies((resolve) => setTimeout(resolve, time));
+        })();
+
+
+
+        // 64格子指数幂
+        (function() {
+            let num = 1;
+            for (let i = 0; i < 64; i++) {
+                num *= 2
+            };
+            console.log(num);
+        })();
+        
+
+
+        // 1-100求和
+        (function() {
+
+            function add(num) {
+                if(num == 1) return 1;
+                return add(num - 1) + num;
+            };
+            console.log(add(100));
+
+            function add2(num) {
+                let total = 0;
+                for (let i = 1; i <= num; i++) {
+                    total += i;
+                };
+                return total;
+            };
+            console.log(add2(100));
+
+            function add3(num) {
+                const arr = new Array(num).fill('').map((_, i) => i + 1);
+                let count = 0
+                arr.reduce((pre, cur) => {
+                    count ++
+                }, 0)
+                return count
+            };
+            console.log(add2(100));
+        })();
+        
+
+
+        // 99乘法表
+        (function() {
+            let res = [];
+            for (let index = 1; index <= 9; index++) {
+                res.push([]);
+                for (let key = 1; key <= index; key++) {
+                    res[index - 1].push(
+                        `${key} * ${index} = ${key * index}`
+                    );
+                };
+            };
+            console.log(res);
+        })();
+
+
+
+        // 斐波那且
+        (function feibo(n) {
+            let a = 0,
+                b = 1,
+                c = null,
+                arr = [a, b];
+            for(let i = 1; i < n; i++) {
+                c = a + b;
+                a = b;
+                b = c;
+                arr.push(c);
+            };
+            console.log(arr);
+        })(10);
+        
+
+
+        // 深拷贝
+        (function() {
+            function deepClone(object) {
+                let data = Array.isArray(object) ? [] : {};
+                for (const key in object) {
+                    if (Object.hasOwnProperty.call(object, key)) {
+                        data[key] = typeof object[key] === "object" ? deepClone(object[key]) : object[key];
+                    };
+                };
+                return data;
+            };
+            const obj = {
+                a: 111, c: { name: 'Yao' }
+            };
+            const obj2 = deepClone(obj);
+            obj.c.name = 'hafan';
+            console.log(obj);
+            console.log(obj2);
+        })();
+        
+
+
+        // 实现 flat
+        (function() {
+            // 方法 1
+            function flat1(array) {
+                const newArr = [], stack = [...array];
+                while(stack.length) {
+                    const item = stack.pop();
+                    if(Array.isArray(item)) {
+                        stack.push(...item);
+                    }else {
+                        newArr.unshift(item);
+                    };
+                };
+                return JSON.stringify(newArr);
+            };
+            console.log(flat1([1, [2, 3, 4], [5, [6, [7, [8]]]]]));
+
+            // 方法 2
+            function flat2(array) {
+                return array.reduce((arr, item) => {
+                    return arr.concat(Array.isArray(item) ? flat2(item) : item);
+                }, []);
+            };
+            function flat2(array) {
+                
+            }
+            console.log(flat2([1, [2, 3, 4], [5, [6, [7, [8]]]]]).toString());
+
+            // 方法 3
+            function flat3(array) {
+                return array.flat(Infinity);
+            };
+            console.log(flat3([1, [2, 3, 4], [5, [6, [7, [8]]]]]));
+        })();
+
+
+
+        // 深度/广度优先
+        (function() {
+            const data = [{ name: 'a',
+                children: [{ name: 'a1', children: [{ name: 'a11' }, { name: 'a12' }]}, { name: 'a2' }, { name: 'a3' }],
+            },
+            { name: 'b', children: [{ name: 'b1' }, { name: 'b2' }, { name: 'b3' }] }]
+            
+            function depth(data, res = []) {
+                data.forEach(item => {
+                    res.push(item.name)
+                    if(item.hasOwnProperty('children')) {
+                        depth(item.children, res)
+                    }
+                })
+                return res
+            }
+            console.log('深度优先', depth(data))
+
+            function breadth(data) {
+                const res = [], queue = [...data]
+                while(queue.length) {
+                    let item = queue.shift()
+                    res.push(item.name)
+                    if(item.hasOwnProperty('children')) {
+                        queue.push(...item.children)
+                    }
+                }
+                return res
+            }
+            console.log('广度优先', breadth(data))
+        })();
+        
+
+
+        // 计算1-10000中出现的 0 的次数
+        (function() {
+            let arr = new Array(10000).fill('')
+                .map((_, index) => index + 1)
+                .filter(item => /0/.test(item))
+                .reduce((num, item) => {
+                    return num += (String(item).match(/0/g) || []).length
+                }, 0);
+            console.log(arr);
+        })();
+
+
+
+        // 两个数组的交集
+        (function() {
+            const nums1 = [1, 2, 2, 1], nums2 = [4, 5, 2, 2];
+            // 方法 1
+            function findArr(arr1, arr2) {
+                let newArr = [];
+                for (const item of arr1) {
+                    if(arr2.includes(item)) {
+                        newArr.push(item);
+                    };  
+                };
+                return newArr;
+            };
+            console.log(findArr(nums1, nums2));
+
+            // 方法 2
+            let newArr = nums1.filter(item => {
+                return nums2.includes(item)
+            });
+            console.log(newArr);
+        })();
+
+
+
+        // 生成指定长度数组并插入随机数
+        (function() {
+            // 方法 1
+            let arr = new Array(10).fill('').map(() => {
+                return Math.floor(Math.random() * 100)
+            });
+            console.log(arr);
+
+            // 方法 2
+            let arr2 = Array.from({length: 10}).map(() => {
+                return Math.floor(Math.random() * 100)
+            });
+            console.log(arr2);
+
+            // 方法 3
+            let arr3 = Array.from({length: 10}, () => {
+                return Math.floor(Math.random() * 100)
+            });
+            console.log(arr3);
+        })();
+
+
+
+        // 出现最多的字符
+        // 思路，循环字符串，新对象去接收并计数
+        (function() {
+            function findMax(str) {
+                // 临时对象
+                let charObj = {};
+                for (let i = 0; i < str.length; i++) {
+                    // 如果没有记录过当前字符则默认设置为 1
+                    if(!charObj[str[i]]) {
+                        charObj[str[i]] = 1;
+                    }else { // 如果存在改字符则 +1
+                        charObj[str[i]] += 1;
+                    };
+                };
+                console.log(charObj);
+                let maxChar = '', maxValue = 1;
+                for (const key in charObj) {
+                    if(maxValue < charObj[key]) {
+                        maxChar = key;
+                        maxValue = charObj[key];
+                    }
+                }
+                return '出现最多的字符为：' + maxChar + '，共' + maxValue + '次'
+            };
+            console.log(findMax('abca'));
+        })();
+        
+
+
+        // 0.1 厚的纸片折叠多少次才能超过 珠穆朗玛峰
+        (function() {
+            var hd = 0.0001;
+            var a = 0;
+            while(hd <= 8848) {
+                hd *=2;
+                a ++;
+            };
+            console.log(a);
+        })();
+
+
+
+        // 判断是否支持 webp
+        (function() {
+            try {
+                // toDataURL 将 webp 格式图片转成 base64 格式可以判断是否支持 webp，如果 ‘data:image/webp’ 则为支持
+                return (document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') === 0)
+            }catch(e) {
+                return false
+            }
+        })();
+
+    </script>
+</body>
+
+</html>

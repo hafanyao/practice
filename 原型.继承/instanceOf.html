@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实现instanceOf</title>
+</head>
+
+<body>
+    <script>
+        // instanceof 运算符用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型链上。MDN上
+        // 关键点: 构造函数 Fn 的 prototype，实例对象的原型链。
+        // 所以只要遍历实例对象的原型链，
+        // 挨个往上查找看是否有与 Fn 的 prototype 相等的原型，
+        // 直到最顶层 Object 还找不到，那么就返回 false。
+        
+        // --------------------递归实现(方式1)--------------------
+        /**
+         * @param {*} obj 实例对象
+         * @param {*} func 构造函数
+         * @returns true false
+         */
+        var instanceOf1 = (obj, func) => {
+            if (obj === null || typeof obj !== 'object') {
+                return false
+            }
+            const proto = Object.getPrototypeOf(obj)
+            if (proto === func.prototype) {
+                return true
+            } else if (proto === null) {
+                return false
+            } else {
+                return instanceOf1(proto, func)
+            }
+        }
+
+        // 路白 - https://www.bilibili.com/video/BV1EF411h71G
+        instanceOf1 = (obj, fn) => {
+            if(obj === null || typeof obj !== 'object') {
+                return false
+            }
+            while(true) {
+                if(obj === null) {
+                    return false
+                }
+                if(obj.__proto__ === fn.prototype) {
+                    return true
+                }
+                // 一直向上查找，直到 null
+                obj = obj.__proto__
+            }
+        }
+
+        // 测试
+        let Fn = function () {}
+        let p1 = new Fn()
+        console.log('---------------------');
+        console.log(instanceOf1({}, Object)) // true
+        console.log(instanceOf1(p1, Fn)) // true
+        console.log(instanceOf1({}, Fn)) // false
+        console.log(instanceOf1(null, Fn)) // false
+        console.log(instanceOf1(1, Fn)) // false
+
+
+
+        // --------------------遍历实现(方式2)--------------------
+        /**
+         * @param {*} obj 实例对象
+         * @param {*} func 构造函数
+         * @returns true false
+         */
+        const instanceOf2 = (obj, func) => {
+            if (obj === null || typeof obj !== 'object') {
+                return false
+            }
+            let proto = obj
+            while (proto = Object.getPrototypeOf(proto)) {
+                if (proto === null) {
+                    return false
+                } else if (proto === func.prototype) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        // 测试
+        let Fn2 = function () {}
+        let p2 = new Fn()
+        console.log('---------------------');
+        console.log(instanceOf2({}, Object)) // true
+        console.log(instanceOf2(p2, Fn2)) // true
+        console.log(instanceOf2({}, Fn2)) // false
+        console.log(instanceOf2(null, Fn2)) // false
+        console.log(instanceOf2(1, Fn2)) // false
+
+
+
+        // --------------------遍历实现(方式3)--------------------
+        /**
+         *
+         * @param {*} obj 实例对象
+         * @param {*} func 构造函数
+         * @returns true false
+         */
+        const instanceOf3 = (obj, func) => {
+            if (obj === null || typeof obj !== 'object') {
+                return false
+            }
+            let proto = obj
+            // 因为一定会有结束的时候（最顶层Object），所以不会是死循环
+            while (true) {
+                if (proto === null) {
+                    return false
+                } else if (proto === func.prototype) {
+                    return true
+                } else {
+                    proto = Object.getPrototypeOf(proto)
+                }
+            }
+        }
+
+        // 测试
+        let Fn3 = function () {}
+        let p3 = new Fn()
+        console.log('---------------------');
+        console.log(instanceOf3({}, Object)) // true
+        console.log(instanceOf3(p3, Fn3)) // true
+        console.log(instanceOf3({}, Fn3)) // false
+        console.log(instanceOf3(null, Fn3)) // false
+        console.log(instanceOf3(1, Fn3)) // false
+
+
+
+        // --------------------遍历实现(方式4)--------------------
+        /**
+         *
+         * @param {*} obj 实例对象
+         * @param {*} func 构造函数
+         * @returns true false
+         */
+         const instanceOf4 = (obj, func) => {
+            if (obj === null || typeof obj !== 'object') {
+                return false
+            }
+            let proto = obj
+            // 因为一定会有结束的时候（最顶层Object），所以不会是死循环
+            while (true) {
+                if (proto === null) {
+                    return false
+                } else if (proto === func.prototype) {
+                    return true
+                } else {
+                    proto = Object.getPrototypeOf(proto)
+                }
+            }
+        }
+
+        // 测试
+        let Fn4 = function () {}
+        let p4 = new Fn()
+        console.log('---------------------');
+        console.log(instanceOf3({}, Object)) // true
+        console.log(instanceOf3(p4, Fn4)) // true
+        console.log(instanceOf3({}, Fn4)) // false
+        console.log(instanceOf3(null, Fn4)) // false
+        console.log(instanceOf3(1, Fn4)) // false
+
+    </script>
+</body>
+
+</html>

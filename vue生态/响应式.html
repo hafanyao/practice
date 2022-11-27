@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue响应式 - 金渡</title>
+</head>
+<body>
+
+    <h2>Vue 响应式实现</h2>
+    
+    <div>
+        订阅试图-1：<span class="box-1"></span><br>
+        订阅试图-2：<span class="box-2"></span>
+    </div>
+    
+    <script>
+        // 订阅器
+        let Dep = {
+            clientList: {}, // 容器
+            // 订阅的方法
+            listen: function(key, fn) {
+                (this.clientList[key] || (this.clientList[key] = [])).push(fn);
+            },
+            // 发布
+            trigger: function() {
+                // 类数组转数组
+                let key = Array.prototype.shift.call(arguments),
+                    fns = this.clientList[key];
+                if(!fns || fns.length === 0) {
+                    return
+                };
+                for (let i = 0, fn; fn = fns[i++];) {
+                    // arguments：附送消息
+                    fn.apply(this, arguments);
+                };
+            }
+        };
+
+        let dataHiJack = function({ data, tag, datakey, selector }) {
+            let value = '',
+                el = document.querySelector(selector);
+            // 数据劫持
+            Object.defineProperty(data, datakey, {
+                get: function() {
+                    console.log('取值');
+                    return value;
+                },
+                set: function(newVal) {
+                    console.log('设置值');
+                    value = newVal;
+                    // 通知模版
+                    Dep.trigger(tag, value);
+                }
+            });
+            // 订阅
+            Dep.listen(tag, function(text) {
+                el.innerHTML  = text;
+            });
+        };
+
+        // test
+        let dataDemo = {};
+        dataHiJack({
+            data: dataDemo,
+            tag: 'view-1',
+            datakey: 'one',
+            selector: '.box-1'
+        });
+        dataHiJack({
+            data: dataDemo,
+            tag: 'view-2',
+            datakey: 'two',
+            selector: '.box-2'
+        });
+        dataDemo.one = 'hafan';
+        dataDemo.two = 'Yao';
+
+    </script>
+</body>
+</html>

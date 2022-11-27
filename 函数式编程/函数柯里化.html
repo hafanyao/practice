@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>函数柯里化</title>
+</head>
+<body>
+    <script>
+        // 路白 - https://www.bilibili.com/video/BV1ug411w7sb/
+        (function() {
+            // 柯里化
+            function currying(fn, ...args) {
+                const originFnArgLengch = fn.length
+                let allArgs = [...args]
+                const resFn = (...newArgs) => {
+                    allArgs = [...allArgs, ...newArgs]
+                    // 如果参数已经全部拿到则返回结果
+                    if(allArgs.length === originFnArgLengch) {
+                        return fn(...allArgs)
+                    }else { // 否则继续收集参数
+                        return resFn
+                    }
+                }
+                return resFn
+            }
+            const add = (a, b, c) => a + b + c
+            const a1 = currying(add, 1)
+            
+            // - 调用 1
+            const a2 = a1(2)
+            console.log(a2(3)) // 6
+
+            // - 调用 2
+            const a3 = currying(add, 1)
+            const a4 = a3(2, 3)
+            console.log(a4) // 6
+
+            // - 调用 3
+            const a5 = currying(add, 1, 2, 3)
+            console.log(a5()) // 6
+
+        })();
+
+        console.log('------------');
+
+        // 云隐
+        (function() {
+            
+            /*
+                面试题：手写构造可拆分传参的累加函数
+                web0327函数式编程——云隐 - 2022-04-08
+            */
+            /*
+                1. 构造柯里化结构
+                2. 输入层：处理外部 arguments（类数组形态）
+                3. 传入参数无限拓展 => 递归返回函数
+                4. 主功能实现 => 累加
+            */
+
+            /*********** 重要 *************/
+            var ADD = function() {
+                // 输入：将 arguments 类数组转化为数组
+                let args = Array.from(arguments)
+                // let args = Array.prototype.slice.call(arguments)
+                // 内层处理
+                let inner = function() {
+                    // 内外层参数合并
+                    args.push(...arguments)
+                    return inner
+                }
+                // 重写函数的 toString 方法
+                inner.toString = function() {
+                    return args.reduce((pre, cur) => pre + cur)
+                }
+                return inner
+            }
+            ADD = function() {
+                // resArr: [1]
+                const resArr = [...arguments]
+                const inner = function() {
+                    // arguments: [item]
+                    resArr.push(...arguments)
+                    // resArr: [item, item, item]
+                    // console.log(resArr);
+                    return inner
+                }
+                inner.toString = function() {
+                    return resArr.reduce((pre, cur) => pre + cur)
+                }
+                return inner
+            }
+            // ADD = function() {
+                
+            // }
+            console.log('' + ADD(1, 2)(3)(4)(5, 6));
+            console.log(parseInt(ADD(1)(2)(3)(4)(5)));
+
+            return
+            // f(x, y, z) => f(x)(y)(z)
+            const sum = (x, y) => {
+                return x + y
+            }
+            console.log(sum(1, 2))
+
+            const add = x => {
+                return y => {
+                    return x + y
+                }
+            }
+            console.log(add(1)(2))
+            // 实现：体系 = 加工 + 组装，单个加工输入输入应当单值化
+
+        })()
+
+        console.log('------------');
+
+        (function() {
+            return
+            // 老路
+            function curry (func) {
+                return function curried (...args) {
+                    if (args.length >= func.length) {
+                        return func.apply(this, args)
+                    }
+                    return function (...args2) {
+                        return curried.apply(this, args.concat(args2))
+                    }
+                }
+            }
+            
+            function sum (a, b, c) {
+                return a + b + c
+            }
+            
+            let currysum = curry(sum);
+            console.log(currysum(1, 2, 3))
+            console.log(currysum(1)(2)(3))
+            console.log(currysum(1, 2)(3))
+        })();
+
+
+    </script>
+</body>
+</html>
