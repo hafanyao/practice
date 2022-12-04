@@ -156,7 +156,39 @@
 
 
 
-        /******************** 实现 allSettled 串行 ********************/
+        /******************** 实现 allSettled ********************/
+        /*
+            Promise.all 有一个缺陷，当遇到 rejected，后面是 resolve 或 reject 的结果是拿不到的
+            ES11 新增 Promise.allSettled，无论状态是 fulfilled / rejected 都会把参数返回给我们
+            如果其中一个 promise 没有结果，则什么都不打印
+        */
+        const promise1 = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                reject('hi ice')
+            }, 1000);
+        })
+        const promise2 = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve('hi panda')
+            }, 2000);
+        })
+        const promise3 = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                reject('hi grizzly')
+            }, 3000);
+        })
+        Promise.allSettled([promise1, promise2, promise3]).then(res => console.log(res))
+        /* [
+            { status: 'rejected', reason: 'hi ice' },
+            { status: 'fulfilled', value: 'hi panda' },
+            { status: 'rejected', reason: 'hi grizzly' }
+        ] */
+        
+
+
+
+
+        /******************** 实现 reace 串行 ********************/
         // 方法1: 返回下一个 promise
         function iteratorPromise_1(arr) {
             for (let i = 0; i < arr.length; i++) {

@@ -163,7 +163,7 @@
         - runtimeChunk 的作用是将包含 chunk 映射关系的列表从 main.js 中抽离出来
         - 借助 webpack-bundle-analyzer 查看一下是哪些包的体积较大，分析打包结果
     ```js
-        // 安装compression-webpack-pLugin
+        // 安装 compression-webpack-pLugin
         // vue.config.js
         const CompressionPlugin = require('compression-webpack-plugin')
         // gzip 压缩处理
@@ -177,5 +177,7 @@
                     }))
             }
         }
+        // js 压缩插件 terser-webpack-plugin
+        // https://www.jianshu.com/p/4ce8e2247033
     ```
     
