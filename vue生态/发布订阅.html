@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue 发布订阅</title>
+</head>
+
+<body>
+    <script>
+        /*
+        
+            发布订阅模式也就是观察者模式
+            new Observer - 生成的是发布者
+            发布者首先提供一些窗口让订阅者可以订阅事件 - addEventListener
+            发布者可以触发订阅事件，也可以解除订阅
+
+            return false 为了链式调用
+        
+        */
+       
+        // 手写发布订阅模式 EventEmitter（Observer）
+        class _EventEmitter {
+            constructor(maxListeners) {
+                this.events = {}
+                this.maxListeners = maxListeners || Infinity
+            }
+            // 实现订阅
+            on(name, callBack) {
+                if(!this.events[name]) {
+                    this.events[name] = []
+                }
+                this.events[name].push(callBack)
+            }
+            _on(name, callBack) {
+                if(!this.events[name]) {
+                    this.events[name] = []
+                }
+                // 拦截最大监听数 - 进阶
+                if(this.maxListeners !== Infinity && this.events[name].length >= this.maxListeners) {
+                    console.log('events has reached max listeners');
+                    return this
+                }
+                this.events[name].push(callBack)
+                return this
+            }
+            // 只执行一次订阅事件
+            once(name, callBack) {
+                const fn = function(...rest) {
+                    this.off(name, fn)
+                    callBack.call(this, rest)
+                }
+                this.on(name, fn)
+            }
+            _once(name, callBack) {
+                const fn = function(...rest) {
+                    this.off(name, fn)
+                    callBack.call(this, rest)
+                }
+                this.on(name, fn)
+                return this
+            }
+            // 触发事件
+            emit(name, ...rest) {
+                const cbs = this.events[name]
+                if(!cbs) {
+                    console.warn('event is not registered')
+                    return this
+                }
+                cbs.forEach(fn => fn.apply(this, rest))
+                return this
+            }
+            _emit(name, ...rest) {
+                const cbs = this.events[name]
+                if(!cbs) {
+                    console.warn('event is not registered')
+                    return this
+                }
+                cbs.forEach(fn => fn.apply(this, rest))
+                return this
+            }
+            // 删除订阅
+            off(name, callBack) {
+                if(!this.events[name]) return
+                if(!callBack || typeof callBack !== 'function') {
+                    this.events[name] = []
+                }else {
+                    this.events[name] = this.events[name].filter(fn => fn !== callBack)
+                }
+            }
+            _off(name, callBack) {
+                if(!this.events[name]) return
+                if(!callBack) {
+                    this.events[name] = null
+                }else {
+                    this.events[name] = this.events[name].filter(fn => fn !== callBack)
+                }
+                return this
+            }
+        }
+        
+
+        class EventEmitter {
+            constructor() {
+                this.events = {}
+            }
+            on(name, fn) {
+                if(!this.events[name]) {
+                    this.events[name] = []
+                }
+                this.events[name].push(fn)
+            }
+            emit(name, ...rest) {
+                this.events[name].forEach(fn => fn.apply(this, rest))
+            }
+            off(name, fn) {
+                if(!fn) {
+                    this.events[name] = []
+                }else {
+                    this.events[name] = this.events[name].filter(item => item !== fn)
+                }
+            }
+            once(name, fn) {
+                const _self = this
+                const _callback = function(...rest) {
+                    fn.call(this, rest)
+                    _self.off(name, _callback)
+                }
+                this.on(name, _callback)
+            }
+        }
+
+        const handle = (...rest) => {
+            console.log(rest)
+        }
+
+        // 使用如下
+        const eventer = new EventEmitter()
+
+        console.error('------ EventEmitter ------')
+
+        eventer.on("click", handle)
+
+        eventer.emit("click", 1, 2, 3)
+
+        eventer.off("click", handle)
+
+        eventer.emit("click", 1, 2)
+
+        eventer.once("dbClick", () => {
+            console.log(123456)
+        })
+        eventer.emit("dbClick")
+        eventer.emit("dbClick")
+
+        console.error('------ EventEmitter ------')
+    </script>
+
+
+
+    <h1>金渡</h1>
+    <h2> * 用发布-订阅模式深度解偶代码 </h2>
+    <h3> 1. 某个组件很多地方都用到了 —— 封装 => 复用 </h3>
+    <h3> 2. 某一个方法，功能耦合度太高  —— 解偶 => 更好的复用维护</h3>
+    <script>
+        //******************  方式一  ******************//
+        let doSomething = {}; // 事件
+        doSomething.list = []; // 事件容器
+        // 添加订阅者
+        doSomething.listen = function(key, fn) {
+            // key => 唯一值，fn => 具体需求
+            (this.list[key] || (this.list[key] = [])).push(fn);
+        };
+        // 发布消息
+        doSomething.trigger = function() {
+            // 类数组转数组
+            let key = Array.prototype.shift.call(arguments),
+                fns = this.list[key];
+            if(!fns || fns.length === 0) {
+                return
+            };    
+            for (let i = 0, fn; fn = fns[i++];) {
+                // arguments：附带的信息
+                fn.apply(this, arguments);
+            };
+        };
+
+        // 需要一个唯一的 key 值
+        doSomething.listen('bye-1', function(arg) {
+            console.log(arg);
+        });
+        doSomething.trigger('bye-1', '买了衣服');
+
+        doSomething.listen('bye-2', function(arg) {
+            console.log(arg);
+        });
+        doSomething.trigger('bye-2', '买了鞋子');
+
+
+
+        //******************  方式二  ******************//
+        console.log('-----------------------------------');
+        /**
+            抽取公用部分 => 封装
+            依然存在耦合，性能浪费
+        **/
+        let event = { // 封装一个发布订阅的功能
+            clientList: {},
+            listen: function(key, fn) {
+                (this.clientList[key] || (this.clientList[key] = [])).push(fn);
+            },
+            trigger: function() {
+                let key = Array.prototype.shift.call(arguments),
+                    fns = this.clientList[key];
+                if(!fns || fns.length === 0) {
+                    return
+                };
+                for (let i = 0, fn; fn = fns[i++];) {
+                    // arguments：附带的信息
+                    fn.apply(this, arguments);
+                };
+            }
+        };
+
+        // 让每个对象都可以得到这一套功能
+        let initEvent = function(obj) { // 赋能
+            for (let i in event) {
+                obj[i] = event[i];
+            };
+        };
+
+        // -- 订阅 购物
+        let goShopping = {};
+        initEvent(goShopping);
+        // console.log(goShopping);
+        goShopping.listen('九点', function(obj) {
+            console.log('买了' + obj);
+        });
+        goShopping.listen('十点', function(obj) {
+            console.log('买了' + obj);
+        });
+        goShopping.trigger('九点', '衣服');
+        goShopping.trigger('十点', '鞋子');
+
+        // -- 订阅 打球
+        let Basketball = {};
+        initEvent(Basketball);
+        // console.log(Basketball);
+
+
+
+        //******************  方式三  ******************//
+        console.log('-----------------------------------');
+        /*
+            闭包高级应用场景：
+            1. 创建私有域 => Vue 中的 data() {}
+            2. 延长变量声明周期，局部变量并且需要它常驻于内存当中
+            3. return => 保持对这个变量的引用
+        */
+        let Event = (function() {
+            let clientList = {},
+                listen,
+                trigger;
+            listen = function(key, fn) {
+                (clientList[key] || (clientList[key] = [])).push(fn);
+            };
+            trigger = function() {
+                // 类数组转数组
+                let key = Array.prototype.shift.call(arguments),
+                    fns = clientList[key];
+                if(!fns || fns.length === 0) {
+                    return
+                };
+                for (let i = 0, fn; fn = fns[i++];) { // 简写
+                // for (let i = 0; i < fns.length; i++) {
+                //     fn = fns[i];
+                    // arguments：附带的信息
+                    fn.apply(this, arguments);
+                };
+            };
+            // 返回方法，谁用谁调
+            return {
+                listen: listen,
+                trigger: trigger
+            }
+        })();
+
+        Event.listen('九点', function(something) {
+            console.log(something);
+        });
+        Event.trigger('九点', '买了衣服');
+
+        Event.listen('十点', function(something) {
+            console.log(something);
+        });
+        Event.trigger('十点', '买了鞋子');
+
+    </script>
+</body>
+
+</html>

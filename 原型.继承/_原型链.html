@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width. initial-scale=1.0">
+    <title>原型链</title>
+</head>
+
+<body>
+    <script>
+        
+        /***
+            *** 重要 ***
+            null => object, Array（基类）
+            构造函数内部，this 直接指向构造出来的实例对象
+            只有函数对象才有 prototype 属性 ，重要的事情说三遍!
+            原型链（定义）：由各级父对象逐级继承形成的链式结构 就是原型链，顶层对象就是 Object.prototype => null
+            原型链(__proto__)查找规则：自下而上，沿着原型链逐级向上查找，直到 null 而止，如果未定义则 undefined
+            Object.getPrototypeOf() 方法，可以获取对象的原型，Object.setPrototypeOf() 方法，可以设置对象的原型
+            原型链的尽头一般来说都是 Object.prototype 所以这就是新建的对象为什么能够使用 toString() 等方法的原因
+        ***/ 
+
+
+        console.log(window.prototype); // undefined
+        console.log(window.__proto__); // window
+        console.log(Object.prototype); // Object
+        console.log(Object.prototype.__proto__); // null
+        console.log(window.__proto__ === Object.prototype); // false
+
+        // 麓一：所有关系逃不出这三个公式
+        function Person() {}
+        const p = new Person()
+        // p 的构造函数的 Person
+        console.log(p.constructor === Person);
+        console.log(p.__proto__ === Person.prototype);
+        console.log(Person.prototype.constructor === Person);
+
+        function Foo() {}
+        const foo = new Foo()
+        console.log(foo.__proto__ === Foo.prototype)
+        console.log(Foo.prototype.__proto__ === Foo) // ???
+        console.log(Foo.__proto__ === Function.prototype)
+
+        // 创建对象的方式
+        const o1 = {} // 有原型链
+        const o2 = new Object()
+        const o3 = Object.create({})
+        const o4 = Object.create(Object.prototype)
+        const o5 = Object.create(null) // 没有原型链 __proto__
+        console.log(o1.__proto__ === Object.prototype);
+        console.log(o2.__proto__ === Object.prototype);
+        console.log(o3.__proto__ === Object.prototype);
+        console.log(o4.__proto__ === Object.prototype);
+        console.log(o5.__proto__ === Object.prototype);
+        console.log(o1 === o4);
+
+        /*
+            -- 问题 1
+
+            a = {} 和 a = Object.create({}) 的区别：
+                
+                {} 原型只有一层，Object.create({}) -> 是两层，基于空对象去创建对象，有原型指向关系
+                如何实现只有一层原型: Object.create(Object.prototype)
+
+        */
+
+        //  判断一个对象有没有属性最安全的方法
+        const obj = {
+            name: 'yao'
+        }
+        // console.log(Object.hasOwnProperty);
+        if(Object.prototype.hasOwnProperty) { // 100分
+            const has = Object.prototype.hasOwnProperty.call(obj, 'name')
+        }
+        if (Object.hasOwnProperty.call(obj, 'name')) {} // 50分
+
+
+
+        /*
+            new 关键字做了什么
+                1. 创建一个新的空对象
+                2. 将对象原型指向构造函数（__proto__ 指向 prototype）
+                3. 改变 this 指向，继承构造函数的属性和方法
+                    （将空对象作为构造函数的上下文，同时将参数传到构造器中）
+                4. 对构造函数的返回值进行判断
+                    特定情况 -- 如果没有返回值，则返回创建的对象
+                            -- 如果有返回值，是一个对象，则返回该对象
+                            -- 如果有返回值，不是对象，则返回创建的对象
+             所以，上面的第二、三步，箭头函数都是没有办法执行的。
+
+
+            普通函数 和 箭头函数 的区别 - https://www.cnblogs.com/zjqzilq/p/14774905.html
+                1. 没有原型属性 prototype
+                2. 匿名函数，不能作为构造函数，不能 new
+                3. 使用 rest 参数传递实参，普通函数采用 arguments 传递参数
+                4. 捕获上下文中的 this 作为自己的 this，在定义时就决定的，
+                   指向外层第一个普通函数的 this，且不可修改(bind/call/apply)
+        */
+
+        // 实现 new
+        function Father(age, name) {
+            this.age = age
+            this.name = name
+        }
+        // 方法 1 - 麓一
+        function newObj1(Father, ...args) {
+            if(typeof Father !== 'function') {
+                throw new Error('构造函数的第一个参数必须是一个函数')
+            }
+            var obj = Object.create(Father.prototype)
+            // 截取 Father 之后的所有参数
+            var result = Father.apply(obj, Array.prototype.slice.call(arguments, 1))
+            // ‘特定情况’  
+            return result && typeof result === 'object' ? result : obj
+        }
+        // 方法 2 - 云隐
+        function newObj2(fn, ...args) {
+            // 1. 创建一个新的空对象
+            const obj = {}
+            // 2. __protp__ 指向 prototype
+            Object.setPrototypeOf(obj, fn.prototype)
+            // 3. 改变 this 指向（上下文）
+            var result = fn.apply(obj, args)
+            // 4. 对返回值进行判断
+            return result && typeof result === 'object' ? result : obj
+        }
+        console.log(newObj1(Father, '50', 'yao'));
+        console.log(newObj2(Father, '50', 'yao'));
+
+
+
+        function Fun() {
+            this.num = 2
+        }
+        Fun.prototype.num = 4
+        const num_1 = new Fun()
+        num_1.num = 1
+        num_1.__proto__.num = 3
+        Object.prototype.num = 5
+        console.log(num_1.num);
+        // 查找顺序：对象自身 -> 构造函数 -> 对象proto -> 构造函数prototype -> Object.prototype
+
+
+
+        /*
+            实现一个继承 主要分为两个部分
+            1. 使用父类的构造函数方法；
+            2. 让对象的原型指向父类；
+
+            es6 的继承
+            1. super（父类的构造函数） 作为函数调用时，要求自己必须执行一次
+            2. 因为子类自己的 this 对象，必须通过父类的构造函数完成
+            3. es6 继承，会继承静态方法和属性
+        */
+
+
+        
+        /*
+            一、原型链
+
+            1、函数必然有 prototype 和 __proto__ 两个属性，
+            所有的函数(包括自定义函数)都是 Function 实例的对象；
+
+
+            2、对象必然有 __proto__ 属性，但不一定有 prototype；
+            实例的对象通过 __proto__ 属性连接到构造函数的 prototype 属性上,
+            而原型链就是从这两者的关系开始一层一层往下找的关系；
+
+
+            3、不管是内置对象 Array，还是实例对象，
+            他们都通过 __proto__ 属性指向了 Function.prototype，
+            而 Function.prototype 也相当于一个对象，他的构造器就是 Function，
+            所以可以得出结论，Function 是所有实例对象的自定义构造函数；
+
+
+            4、Function.prototype 通过 __proto__ 属性找到了 Object.prototype，
+            该对象的 __proto__ 再往下找就是 null 了，所以得出 Function 其实是 Object 的实例对象；
+
+
+            5、由始至终引用类型 Object 只有向外指的箭头，而没有指入的箭头，
+            原因就是 “万物皆对象”，任何对象都是属于 object 的实例，
+            所以最终 __proto__ 都会指向 Object 的 prototype 中，再通过 __proto__ 往下就为 null；
+
+
+            6、【小结】所谓原型链就是找 "父亲" 的一种行为行为。
+            原型链的核心其实就只有一个：属性共享和独立的控制，当你的对象实例需要独立的属性，
+            所有做法的本质都是在对象实例里面创建属性。
+        */ 
+
+        
+
+        
+        /*
+            二、指针__proto__
+
+            所有的对象 obj 都具有 __proto__ 属性 (null 和 undefined 除外)，而且指向构造函数对象的 prototype 属性
+            function a() {};
+            console.log(a.prototype.__proto__ === Object.prototype); // true
+            console.log(a.__proto__ === Function.prototype); // true
+
+            思考一下，var obj = {}; obj.prototype.__proto__ 指向谁?
+            console.log(obj.prototype.__proto__ === Object.prototype); 
+            // 报错，因为对象没有prototype属性。。。
+        */
+
+
+        
+        /*
+            三、构造器constructor
+
+            constructor 属性返回对创建此对象的函数对象的引用。
+
+            例子：function a() {};
+            console.log(a.constructor === Function); // true
+            console.log(a.prototype.constructor === a); // true
+            函数 a 是由 Function 创造出来，那么它的 constructor 指向的 Function，
+            a.prototype 是由 new a() 方式创造出来，那么 a.prototype.constructor 理应指向 a
+        */
+
+        
+
+        /*
+            问：系统内置的函数对象： Function，Object，Array，String，Number 都属于函数对象吗?
+            答：引用类型值：指的是那些保存在堆内存中的对象，意思是，变量中保存的实际上只是一个指针，
+                这个指针执行内存中的另一个位置，由该位置保存对象，那么数组，普通对象，
+                函数对象都算是引用数据类型，引用数据类型范围包含函数对象的范围
+
+
+            问：除开函数对象之外的对象都是普通对象： Undefined，Null，Boolean，Number 和 String
+            答：基本类型值：指的是保存在栈内存中的简单数据段；
+                除开函数对象之外的对象都是普通对象，那么普通对象范围是包含基本数据类型的
+
+            问：原型对象 prototype 属于函数对象吗?
+                Function.prototype 属于函数对象. 其他对象的 prototype 属于普通对象
+                function a() {};
+                console.log(typeof Function.prototype); // function
+                console.log(typeof a.prototype); // object
+
+
+            问：var obj = {}; obj.prototype.__proto__指向谁?
+                这里分步思考：
+                1. obj 是一个普通对象
+                2. 什么类型的对象是由 prototype 属性的？当然是函数对象
+                3. 所以 obj 是没有 prototype 属性的
+                4. 所以 obj.prototype === undefined
+                5. 所以此题的最终问题是：undefined.proto 指向什么
+                6. 所有的对象 obj 都具有 proto 属性（null和undefined除外）！
+                    所以答案是 js 报错(有没有一种被我坑了的感觉)
+
+
+            问：a.prototype.__proto__.constructor指向谁？
+                这里继续分解题目：
+                1. a.prototype 指向 a 的一个实例，我们已经多次强调了，而且属于普通对象
+                2. __proto__ 定义为：指向创造 obj 对象的函数对象的 prototype 属性，
+                    所以看下谁创造了 a.prototype，因为 a.prototype 是普通对象，
+                    类型为 object，那么是 Object 创造了它；
+                3. 那么显而易见 a.prototype.__proto__ 指向了 Object.prototype
+                4. 那么题目简化为 Object.prototype.constructor 指向谁
+                5. 继续分解题目，Object.prototype 为基本对象，那么就是 Object 创造了它，
+                    那么它的 constructor 就指向了 Object
+                    Object.prototype.constructor === Object // true
+
+                    
+            不知道你晕不晕，我有点晕，这产生了蛋生鸡还是鸡生蛋的问题啦~
+            放心，还是有尽头的：
+                Object.prototype.__proto__ === null // true
+                而 Object.prototype 的下一级是 Object.prototype.__proto__。
+                这个例子告诉我们是 null 创造了一切，这不就是易经中的：道生一，一生二，二生三，三生万物！
+                原型链终点 Object.prototype.__proto__，
+                而 Object.prototype.__proto__ === null // true，所以，原型链的终点是 null。
+        */
+
+
+        console.log('--------------------------------')
+
+        function a() {}
+        console.log(a.prototype)
+        console.log(a.prototype.__proto__)
+        console.log(a.prototype.__proto__.constructor === Object)
+
+    </script>
+</body>
+
+</html>

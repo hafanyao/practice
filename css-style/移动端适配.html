@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>适配方案</title>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        section {
+            margin-bottom: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        <style>
+            /* 将其宽度设置为设计图大小的一半(设计图大小为750px),将其高度设置为100px */
+            #test {
+                width: 375px;
+                height: 100px;
+                background: pink;
+                text-align: center;
+                font-size: 32px;
+                line-height: 100px;
+            }
+
+            #box2 {
+                display: flex;
+                justify-content: space-around;
+            }
+
+            #box2 div {
+                width: 50%;
+                height: 100px;
+            }
+        </style>
+        <div id="test"></div>
+        <div id="box2">
+            <div></div>
+            <div style="background-color: rebeccapurple;"></div>
+        </div>
+    </section>
+
+    <script>
+        /*
+            移动端适配方案一：插件 -> postcss-px-to-viewport
+            https://www.cnblogs.com/zhangnan35/p/12682925.html
+        */
+        /*
+            移动端适配方案二：根据设计图宽度动态设置 viewport
+            https://segmentfault.com/a/1190000023583974
+        */
+        (function () {
+            /* targetW的值为设计图的宽度大小,此时设置的宽度大小为750 */
+            var targetW = 750;
+            /* 获取视口缩放的比例 */
+            var scale = document.documentElement.clientWidth / targetW;
+            /* 获取到meta标签 */
+            var meta = document.querySelector("meta[name='viewport']");
+            /* 向其添加缩放的比例 */
+            meta.content = "initial-scale=" + scale + ",minimum-scale=" + scale + ",maximum-scale=" + scale +
+                ",user-scalable=no";
+        })()
+    </script>
+</body>
+
+</html>

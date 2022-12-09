@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>proxy</title>
+</head>
+<body>
+    
+    <script>
+        
+        let age = 20;
+        const P1 = { name: 'Yao' };
+        Object.defineProperty(P1, 'age', {
+            enumerable: true, // 可枚举
+            configurable: true, // 可配置
+            get() {
+                console.log(`age属性被读取: ${age}`);
+                return age;
+            },
+            set(newVal) {
+                console.log(`age属性被修改: ${newVal}`);
+                age = newVal;
+            }
+        });
+        console.log(P1, ' --- P1.age: ' + P1.age);
+        P1.age = 30;
+        console.log(P1, ' --- P1.age: ' + P1.age);
+
+        
+        console.log('----------------------------');
+
+
+        /*
+            Reflect（反射）：es6新增，挂在 window 上
+            可以定位出问题并继续执行，并且代码可以继续执行
+        */
+        const obj = {
+            age: 28,
+            sex: '男'
+        };
+        console.log('---', Reflect.get(obj, 'age'));
+        const P2 = new Proxy(obj, {
+            get(target, propName) {
+                console.log(`读取P的${propName}属性`);
+                // return 5;
+                return Reflect.get(target, propName);
+            },
+            set(target, propName, value) {
+                console.log(`修改P的${propName}属性，值为${value}`);
+                target[propName] = value;
+                return Reflect.set(target, propName, value);
+            },
+            deleteProperty(target, propName) {
+                console.log(`删除P的${propName}属性`);
+                return Reflect.deleteProperty(target, propName);
+            }
+        });
+        P2.age = 30;
+        
+    </script>
+</body>
+</html>

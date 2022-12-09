@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>面向对象OOP</title>
+</head>
+
+<body>
+    <script>
+        
+        var name = 'Yao';
+        // const name = 'Yao'; // 不挂载win
+        const obj = {
+            name: 'hafan',
+            getName: function () {
+                console.log(this.name);
+            }
+        };
+        obj.getName();
+        const fn = obj.getName;
+        fn();
+        // var fn2 = obj.getName(); // 错误：赋值不能带（）
+        // fn2() // fn2 执行错误
+
+
+
+        const a = null;
+        const b = (a ?? ('1' == 1));
+        console.log(b, '---');
+        console.log('1' == 1);
+
+
+
+        (function() {
+            let a;
+            let b = "不知名前端"
+            let c = null;
+            let d = 0;
+            let e;
+            e ??= a?.b ?? c ?? d?.a ?? b;
+            console.log(e)
+        })();
+
+
+
+        console.log('-----------------------');
+        function Person() {
+            this.name = '123';
+            return 'Yao';
+            // 不会影响正常返回，因为函数内部默认返回对象，
+            // 此种情况会被js低层机制判断错误，所以会忽略错误依然正常返回
+        };
+        Person.prototype.name = 'hafan';
+        Person.prototype.age = '29';
+        Person.prototype.getAge = function() {
+            return this.name
+        };
+        // Person.getAge();
+        let P1 = new Person();
+        P1.getAge();
+        console.log(P1.__proto__);
+        console.log(Person.prototype);
+        console.log(Person.constructor); // constructor(构造器)：指向构造它的函数，也就是 - function Person() {}；
+        console.log(Person.constructor === Function);
+        console.log(Person.prototype.constructor === Person);
+        console.log(P1.__proto__ === Person.prototype); // true - * 重要 *
+        console.log(P1.__proto__.name === Person.prototype.name); // true
+
+
+
+        console.log('-----------------------');
+        function Men(name) {
+            this.name = name;
+            // 优先级高于 prototype.say
+            this.say = function() {
+                console.log(this.name);
+            };
+        };
+        Men.prototype.say = function() {
+            console.log('xian');
+        };
+        const tina = new Men('tina');
+        const hafan = new Men('hafan');
+        tina.say();
+        hafan.say();
+
+
+
+        console.log('-----------------------');
+        // 如何判断属性是原型链内的还是自身基本属性
+        P1.height = '180';
+        for (const key in P1) {
+            if (P1.hasOwnProperty(key)) {
+                console.log(key);
+            };
+        };
+        for (const key in P1) {
+            if (Object.hasOwnProperty.call(P1, key)) {
+                const element = P1[key];
+                console.log(key, element);
+            };
+        };
+
+    </script>
+</body>
+
+</html>

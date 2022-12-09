@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>call / apply</title>
+</head>
+<body>
+    
+    <script>
+        // call 和 apply 都是立即执行函数，不必调用。
+        // call 第二个参数不用数组接收，apply 用数组接收，类型可以是任意类型
+        // bind 返回值是一个函数（不会立即执行，需要调用），传参和 call 一样
+
+        // call(this, 1, 2, 3)
+        // apply(this, [1, 2, 3])
+
+        const context = {
+            init: 'init'
+        }
+        function get(name, age) {
+            this.age = age
+            this.name = name
+            console.log(this)
+        }
+        // console.log(get()) // undefined
+        get.call(context, 30, 'yao') // Yao - call 改变 this 指向为 obj
+        get.apply(context, [30, 'yao']) // Yao - apply 改变 this 指向为 obj
+        get.bind(context, 30, 'yao')() // Yao - apply 改变 this 指向为 obj
+
+
+
+        Function.prototype.MyCall = function (context, ...args) {
+            console.log('---', context)
+            const fn = this  // this 指的是当前函数
+            const thisArg = (context === undefined || context === null) ? window : Object(context)
+            thisArg.fn = fn
+            args = args || [] // 如果 arg 不存在，就将其设置为 []，方便解构
+            const result = thisArg.fn(...args)
+            delete thisArg.fn  // 执行完之后就删除该对象上的属性
+            return result
+        }
+        Function.prototype.MyApply = function (context, args = []) {
+            console.log('+++', context)
+            const fn = this // this 指的是当前函数
+            // 如果要是 context 为 undefined 或者 null 时，设置其为 window,
+            // 如果是基本数据类型，则将其设置为对象类型
+            const thisArg = (context === undefined || context === null) ? window : Object(context)
+            thisArg.fn = fn
+            args = args || [] // 如果 arg 不存在，则直接赋值为 []
+            const result = thisArg.fn(...args)
+            delete thisArg.fn
+            return result
+        }
+        Function.prototype.MyBind = function(context, ...args1) {
+            const fn = this // this 指的是当前函数
+            const thisArg = (context === undefined || context === null) ? window : Object(context)
+            return function(...args2) {
+                thisArg.fn = fn
+                const args = [...args1, ...args2]
+                const result = thisArg.fn(...args)
+                delete thisArg.fn
+                return result
+            }
+        }
+
+
+
+        // reduce 实现 map / reduce
+        Array.prototype.MyMap = function (fn, thisArg) {
+            const result = []
+            this.reduce((prev, curr, index, array) => {
+                result[index] = fn.call(thisArg, array[index], index, array)
+            }, 0)
+            return result
+        }
+        Array.prototype.MyReduce = function (cb, initValue) {
+            const array = this // 获取数组
+            let pre = initValue || array[0]
+            const startIndex = initValue ? 1 : 0
+            for (let i = startIndex; i < array.length; i++) {
+                const cur = array[i]
+                pre = cb(pre, cur, i, array)
+            }
+            return pre
+        }
+        const arr = [1, 2, 3, 4, 5]
+        console.log(arr.map(item => item * 2))
+        console.log(arr.MyMap(item => item * 2))
+        console.log(arr.reduce((res, itm) => res + itm, 0))
+        console.log(arr.MyReduce((res, itm) => res + itm, 0))
+
+
+
+
+        // zhuawa
+        Function.prototype.apply = function(context = window) {
+            context.fn = this
+            let result = undefined
+            // 判断是否有第二个参数
+            if(arguments[1]) {
+                result = context.fn(...arguments[1])
+            } else {
+                result = context.fn()
+            }
+            delete context.fn
+            return result
+        }
+        Function.prototype._bind = function (context, ...args1) {
+            // const fn = this
+            // const thisArg = (context === undefined || context === null) ? window : Object(context)
+            // return function(...args2) {
+            //     thisArg.fn = fn
+            //     const args = [...args1, ...args2]
+            //     const result = thisArg.fn(...args)
+            //     delete thisArg.fn
+            //     return result
+            // }
+            const fn = this
+            const thisArg = (context === null || context === undefined) ? window : Object(context)
+            return function(...args2) {
+                thisArg.fn = fn
+                const args = [...args1, ...args2]
+                const result = thisArg.fn(...args)
+                delete thisArg.fn
+                return result
+            }
+        }
+        get.MyCall(context, 30, 'yao')
+        get.MyApply(context, [30, 'yao'])
+        get.MyBind(context, 30, 'yao')()
+        get._bind(context, 30, 'yao-')()
+
+    </script>
+</body>
+</html>

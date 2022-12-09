@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深拷贝</title>
+</head>
+<body>
+    <div id="demo" style="margin: 50px;"></div>
+    <div id="demo2" style="margin: 50px;"></div>
+    <div id="demo3" style="margin: 50px;"></div>
+    <script>
+        // 路白 - https://www.bilibili.com/video/BV1EF411h71G
+
+        /*
+            Symbol
+                - 用来解决属性名冲突的问题，构造唯一的属性名或者变量
+                - 创造私有属性
+        */
+        
+        function getObj() {
+            const symbol = Symbol('test')
+            const obj = {}
+            obj[symbol] = 'test'
+            return obj
+        }
+        console.log(getObj());
+        console.log('------------------');
+
+
+        // 1. 具体如何让一个对象可遍历
+        const obj = {
+            count: 0,
+            // 迭代器：加上这个属性就代表可迭代
+            [Symbol.iterator]: () => {
+                return {
+                    next: () => {
+                        obj.count ++
+                        if(obj.count <= 3) {
+                            return {
+                                value: obj.count,
+                                done: false
+                            }
+                        } else {
+                            return {
+                                value: undefined,
+                                done: true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        const obj2 = {
+            
+        }
+        // 对象不能通过 for of 遍历
+        for(const item of obj) {
+            console.log(item) // 1 2 3
+        }
+
+
+        /*
+            - JSON.stringify 除了会忽略 Symbol 还会忽略什么
+                - undefined / function
+            - 如果对象有循环引用，可以通过 JSON.stringify 序列化吗
+                - 不可以，会报错，确定是 stringify 而不是 parse 吗，确定是 stringify
+            - 请实现一个深拷贝
+
+            1.如果obj里面有时间对象，则JSON.stringify后再JSON.parse的结果，时间将只是字符串的形式，而不是对象的形式
+            2.如果obj里有RegExp(正则表达式的缩写)、Error对象，则序列化的结果将只得到空对象；
+            3、如果obj里有函数，undefined，则序列化的结果会把函数或 undefined丢失；
+            4、如果obj里有NaN、Infinity和-Infinity，则序列化的结果会变成null
+            5、JSON.stringify()只能序列化对象的可枚举的自有属性，例如 如果obj中的对象是有构造函数生成的， 则使用JSON.parse(JSON.stringify(obj))深拷贝后，会丢弃对象的constructor；
+            6、如果对象中存在循环引用的情况也无法正确实现深拷贝；
+            
+        */
+
+        // JSON.stringify(JSON.parse(obj)) 会忽略 Symbol/null/undefined/function
+
+        // WeakMap 可以用 ‘对象做 key’，又不会持有这个对象的引用，
+        // 也就是对象的弱引用，不会影响内存和垃圾回收
+        function deepClone(object, hash = new WeakMap()) {
+            // null 对象
+            if(object === null) {
+                return null
+            }
+
+            // 日期类型
+            if(object instanceof Date) {
+                return new Date(object)
+            }
+
+            // 正则类型
+            if(object instanceof RegExp) {
+                return new RegExp(object)
+            }
+
+            // 基本类型 - 递归终止
+            if(typeof object !== 'object') {
+                return object
+            }
+
+            /*
+                破解循环引用
+                key 是 object，value 是 新对象
+                如果已经有了当前对象，则直接从 hash 内返回
+            */
+            if(hash.has(object)) {
+                return hash.get(object)
+            }
+
+            const resObj = Array.isArray(object) ? [] : {}
+            hash.set(object, resObj)
+
+            Reflect.ownKeys(object).forEach(key => {
+                resObj[key] = deepClone(object[key], hash)
+            })
+
+            return resObj
+        }
+
+        function deepClone2(target, hash = new WeakMap()) {
+            if(target === null) {
+                return null
+            }
+            if(target instanceof Date) {
+                return new Date(target)
+            }
+            if(target instanceof RegExp) {
+                return new RegExp(target)
+            }
+            if(typeof target !== 'object') {
+                return target
+            }
+            if(hash.has(target)) {
+                return hash.get(target)
+            }
+            const res = Array.isArray(target) ? [] : {}
+            hash.set(target, res)
+
+            Reflect.ownKeys(target).forEach(key => {
+                res[key] = deepClone2(target[key], hash)
+            })
+            return res
+        }
+
+        const target = {
+            age: 30,
+            obj: null,
+            name: "John",
+            map: new Map(),
+            set: new Set(),
+            time: new Date(),
+            arr: function() {},
+            rex: /^[\\u4e00-\\u9fa5]{0,}$/,
+            address: {
+                city: "beijing",
+            },
+            arr1: [{
+                name: 'hafanYao'
+            }]
+        };
+
+        const myJSON = JSON.stringify(target);
+        document.getElementById("demo").innerHTML = myJSON;
+        const myJSON2 = JSON.stringify(deepClone2(target))
+        document.getElementById("demo2").innerHTML = myJSON2;
+        
+    </script>
+</body>
+</html>

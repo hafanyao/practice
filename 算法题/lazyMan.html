@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lazyman</title>
+</head>
+<body>
+    <script>
+        /**
+         * const hafan = new LazyMan('hafan')
+         * hafan.sleep('1000').eat().sleep('1000').eat().start()
+        */
+        class LazyMan {
+            constructor(name) {
+                this.name = name
+                this.tackQueue = []
+                this.named(name)
+            }
+            named(name) {
+                this.tackQueue.push(() => {
+                    console.log(`I am ${name}`);
+                    this.next()
+                })
+                return this
+            }
+            sleep(delay) {
+                this.tackQueue.push(() => {
+                    setTimeout(() => {
+                        console.log(`s hava sleep for ${delay} ms`);
+                        this.next()
+                    }, delay)
+                })
+                return this
+            }
+            eat() {
+                this.tackQueue.push(() => {
+                    console.log('I am having Dinner');
+                    this.next()
+                })
+                return this
+            }
+            start() {
+                this.tackQueue.shift()()
+            }
+            next() {
+                if(this.tackQueue.length) {
+                    const task = this.tackQueue.shift()
+                    task()
+                }
+            }
+        }
+        // 事件一个一个执行，不能同时
+        // 方法1 next
+        const hafan = new LazyMan('hafan')
+        hafan.sleep('1000').eat().sleep('1000').eat().start()
+
+        // 方法2 promise
+        class LazyMan2 {
+            constructor(name) {
+                this.name = name
+                this.tackQueue = []
+                this.named(name)
+            }
+            named(name) {
+                this.tackQueue.push(() => new Promise((resolve, reject) => {
+                    console.log(`I am ${name}`);
+                    resolve()
+                }))
+            }
+            sleep(delay) {
+                this.tackQueue.push(() => new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        console.log(`s hava sleep for ${delay} ms`);
+                        resolve()
+                    }, delay)
+                }))
+                return this
+            }
+            eat() {
+                this.tackQueue.push(() => new Promise((resolve, reject) => {
+                    console.log('I am having Dinner');
+                    resolve()
+                }))
+                return this
+            }
+            start() {
+                /*
+                    tackQueue: promose 集合
+                    以 Promise.resolve() 开始，从左向右链式调用
+                    then 不断传入新的 Promise 函数
+                */
+                this.tackQueue.reduce((total, fn) => total.then(fn), Promise.resolve())
+                // fn 是简写
+                // this.tackQueue.reduce((total, fn) => total.then(res => fn()), Promise.resolve())
+            }
+        }
+        const hafan2 = new LazyMan2('hafan')
+        hafan2.sleep('1000').eat().sleep('1000').eat().start()
+
+
+
+        // 方法3 promise - 不使用 start
+        class LazyMan3 {
+            constructor(name) {
+                this.name = name
+                this.tackQueue = []
+                this.named(name)
+                Promise.resolve().then(res => this.start())
+            }
+            named(name) {
+                this.tackQueue.push(() => new Promise((resolve, reject) => {
+                    console.log(`I am ${name}`);
+                    resolve()
+                }))
+            }
+            sleep(delay) {
+                this.tackQueue.push(() => new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        console.log(`s hava sleep for ${delay} ms`);
+                        resolve()
+                    }, delay)
+                }))
+                return this
+            }
+            eat() {
+                this.tackQueue.push(() => new Promise((resolve, reject) => {
+                    console.log('I am having Dinner');
+                    resolve()
+                }))
+                return this
+            }
+            start() {
+                /*
+                    tackQueue: promose 集合
+                    以 Promise.resolve() 开始，从左向右链式调用
+                    then 不断传入新的 Promise 函数
+                */
+                this.tackQueue.reduce((total, fn) => total.then(fn), Promise.resolve())
+                // fn 是简写
+                // this.tackQueue.reduce((total, fn) => total.then(res => fn()), Promise.resolve())
+            }
+        }
+        const hafan3 = new LazyMan3('hafan')
+        hafan3.sleep('1000').eat().sleep('1000').eat()
+    </script>
+</body>
+</html>

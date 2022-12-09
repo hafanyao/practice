@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>grid布局</title>
+    <style>
+        /* 麓一：https://applnzi6vl27059.pc.xiaoe-tech.com/live_pc/l_63088ef3e4b0c942648d187c */
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        ul {
+            width: 100%;
+            display: grid;
+            margin-bottom: 10px;
+        }
+        li {
+            list-style: none;
+            text-align: center;
+            line-height: 100px;
+            font-size: 20px;
+        }
+        .ul-1 {
+            /* align-items/justify-items：内容对齐属性 */
+            grid-template-columns: 24% 24% 24% 24%;
+            grid-template-rows: 80px 80px;
+            row-gap: 10px;
+            column-gap: 1%;
+            align-items: center;
+            justify-items: center;
+            background-color: aquamarine;
+        }
+        .ul-1 li  {
+            line-height: 80px;
+            background-color: aqua;
+        }
+        .ul-2 {
+            /* grid-auto-flow: 排列顺序 - row/cloumn */
+            grid-template-columns: 24% 24% 24% 24%;
+            grid-template-rows: 80px 80px 80px;
+            row-gap: 10px;
+            column-gap: 1%;
+            grid-auto-flow: column;
+            /* 处理超出部分 */
+            grid-auto-rows: 200px;
+        }
+        .ul-2 li  {
+            background-color: seagreen;
+        }
+        /* 
+            grid-row-start
+            grid-row-end
+            grid-column-start
+            grid-column-end
+            网格线属性：让元素扩张
+        */
+        .ul-2 li:first-child {
+            grid-row-start: 1;
+            grid-row-end: 3;
+            grid-column-start: 1;
+            grid-column-end: 3;
+        }
+        .ul-3 {
+            /* repeat：简写，等同于 24% 24% 24% 24% */
+            grid-template-columns: repeat(4, 24%);
+            grid-template-rows: 100px 100px;
+            grid-gap: 1%;
+        }
+        .ul-3 li  {
+            background-color: rosybrown;
+        }
+        .ul-3 li:nth-child(2) {
+            grid-row-start: b-start;
+            grid-row-end: e-end;
+            grid-column-start: b-start;
+            grid-column-end: c-end;
+        }
+        .ul-4 {
+            /* auto-fill：repeat 的第一个参数可以是 auto-fill 也就是自适应 */
+            grid-template-columns: repeat(auto-fill, 100px 200px);
+            grid-template-rows: 100px;
+            grid-gap: 1%;
+        }
+        .ul-4 li  {
+            background-color: khaki;
+        }
+        /* fr：比例/份数 */
+        .ul-5 {
+            grid-template-columns: repeat(2, 2fr 1fr);
+            grid-template-rows: 100px;
+            grid-gap: 1%;
+        }
+        .ul-5 li  {
+            background-color: salmon;
+        }
+        .ul-6 {
+            /* minmax：宽度范围，最小 500px 最大 1fr */
+            grid-template-columns: 1fr 2fr 1fr minmax(500px, 1fr);
+            grid-template-rows: 100px;
+            grid-gap: 1%;
+        }
+        .ul-6 li  {
+            background-color: seagreen;
+        }
+        .ul-7 {
+            /* auto：浏览器决定宽度，可以实现三列布局 */
+            grid-template-columns: 300px auto 200px;
+            grid-template-rows: 100px;
+            gap: 1%;
+        }
+        .ul-7 li  {
+            background-color: orange;
+        }
+        .ul-8 {
+            /* gap：是 row-gap 和 column-gap 的简写，也就是双轴间距 */
+            grid-template-columns: 300px auto 200px;
+            grid-template-rows: 100px;
+            row-gap: 1%;
+            column-gap: 2%;
+        }
+        .ul-8 li  {
+            background-color: fuchsia;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="box">
+        <ul class="ul-1">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+            <li>5</li>
+            <li>6</li>
+            <li>7</li>
+            <li>8</li>
+        </ul>
+        <ul class="ul-2">
+            <li>grid-auto-flow</li>
+            <li>grid-auto-flow</li>
+            <li>grid-auto-flow</li>
+            <li>grid-auto-flow</li>
+            <li>grid-auto-flow</li>
+            <li>grid-auto-flow</li>
+            <li>grid-auto-flow</li>
+            <li>grid-auto-flow</li>
+        </ul>
+        <ul class="ul-3">
+            <li>repeat</li>
+            <li>repeat</li>
+            <li>repeat</li>
+            <li>repeat</li>
+            <li>repeat</li>
+            <li>repeat</li>
+            <li>repeat</li>
+            <li>repeat</li>
+        </ul>
+        <ul class="ul-4">
+            <li>auto-fill</li>
+            <li>auto-fill</li>
+            <li>auto-fill</li>
+            <li>auto-fill</li>
+            <li>auto-fill</li>
+            <li>auto-fill</li>
+        </ul>
+        <ul class="ul-5">
+            <li>fr</li>
+            <li>fr</li>
+            <li>fr</li>
+            <li>fr</li>
+        </ul>
+        <ul class="ul-6">
+            <li>minmax</li>
+            <li>minmax</li>
+            <li>minmax</li>
+            <li>minmax</li>
+        </ul>
+        <ul class="ul-7">
+            <li>三列布局</li>
+            <li>三列布局</li>
+            <li>三列布局</li>
+        </ul>
+        <ul class="ul-8">
+            <li>gap</li>
+            <li>gap</li>
+            <li>gap</li>
+        </ul>
+    </div>
+</body>
+</html>

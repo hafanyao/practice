@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>js技巧</title>
+</head>
+<body>
+    
+</body>
+<script>
+    // 智能手机启用震动：window.navigator.vibrate(500);
+    // 测试用户当前网速：navigator.connection.downlink;
+
+
+
+    // 复制到剪切板
+    const copyToClipboard = (text) => navigator.clipboard && navigator.clipboard.writeText && navigator.clipboard.writeText(text)
+    copyToClipboard("Hello World!")
+
+
+
+    // 检测暗色主题
+    const isDarkMode = () => window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    console.log(isDarkMode())
+
+
+
+    // 滚动到顶部 / 底部
+    const scrollToTop = (element) => element.scrollIntoView({ behavior: "smooth", block: "start" });
+    const scrollToBottom = (element) => element.scrollIntoView({ behavior: "smooth", block: "end" });
+
+
+
+    // 等待函数
+    const wait = (ms) => new Promise((resolve)=> setTimeout(resolve, ms))
+    const asyncFn = async () => {
+        await wait(1000)
+        console.log('等待异步函数执行结束')
+    }
+    asyncFn()
+
+
+
+    // 正则匹配
+    var str = "1a1b1c";
+    var reg = new RegExp("1.", ""); // 或 "1.", "g"
+    console.log(reg.test(str)); // 返回Boolean -- true
+    console.log(reg.exec(str)[0]); // 返回结果 -- 1a
+    console.log(str.match(reg)); // 返回数组 -- ['1a', '1b', '1c']
+
+
+
+    // 从 URL 中获取参数
+    const getParamByUrl = (key) => {
+        const url = new URL(location.href)
+        return url.searchParams.get(key)
+    }
+
+
+
+    // axios -> 提高性能
+    /*
+        axios.interceptors.response.use(
+            response => {
+                window.cancelTokens.length = 0;
+            }
+        )
+    */
+
+    
+</script>
+</html>

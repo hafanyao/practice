@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手写Observer</title>
+</head>
+<body>
+    <script src="Observer.js"></script>
+    <!-- 
+        见 Vue源码 / 理论.md
+    -->
+    <script>
+        console.log(Observer);
+        let _data = new Observer({
+            name: 'Yao',
+            hobby: {
+                first: 'ball'
+            }
+        });
+        console.log(_data);
+        // _data.val.hobby.first = 'love';
+
+
+
+        /*
+            路白：实现一个响应式函数，对一个对象内的所有 key 添加响应式特性
+        */
+
+        /* 答案 */
+
+        const oldArrayPrototype = Array.prototype // 拿到数组的原型对象
+        // Object.create - 创建新数组原型，扩展新方法不会影响原型，不污染array原来的原型对象
+        const newArrPrototype = Object.create(oldArrayPrototype)
+        // newArrPrototype -> Array {} -> 什么方法都没有
+        // newArrPrototype.push = function() {} // 也就是 重新定义数组的方法 ***
+        // array数组，这7种方法是终会改变数组本身
+        const methodsToPatch = ['push', 'pop', 'unshift', 'shift', 'splice', 'sort', 'reverse']
+        
+
+        const renderObj = (key, val) => {
+            console.log(`SET key=${key}, val=${val}`);
+        }
+        const renderArr = (action, ...args) => {
+            console.log(`SET Action=${action}, val=${args.join(',')}`);
+        }
+        
+        function reactive(data) {
+            if(typeof data !== 'object') return
+            if(Array.isArray(data)) {
+                methodsToPatch.forEach(method => {
+                    newArrPrototype[method] = function() {
+                        // 通过 call 实现数组方法原有的功能
+                        oldArrayPrototype[method].call(this, ...arguments)
+                        renderArr(method, ...arguments)
+                    }
+                })
+                // 把新定义的原型对象指向 data.__proto__
+                data.__proto__ = newArrPrototype
+            }else {
+                for (const key in data) {
+                    if (Object.hasOwnProperty.call(data, key)) {
+                        defineReactive(data, key, data[key])
+                    }
+                }
+            }
+        }
+        function defineReactive(object, key, value) {
+            reactive(value)
+            Object.defineProperty(object, key, {
+                enumerable: true, // 可枚举
+                configurable: true, // 可配置
+                get() {
+                    return value;
+                },
+                set(newVal) {
+                    if(value === newVal) return;
+                    value = newVal;
+                    renderObj(key, value)
+                }
+            })
+        }
+
+        /* 题目 */
+        const data = {
+            name: 'Yao',
+            like: 'music',
+            girls: [1, 2, 3],
+            hobby: {
+                second: 'ball',
+                ball: {
+                    basketball: true,
+                    football: {
+                        stady: false
+                    }
+                }
+            }
+        }
+        reactive(data)
+        data.name = 'hafan' // SET key=name, val='hafan'
+        data.like = 'ball' // SET key=like, val='ball'
+        data.hobby.ball.basketball = true
+        data.hobby.ball.football.stady = true
+        data.girls.push(6)
+        data.girls.splice(0, 1)
+
+
+
+
+        console.log('-----------------------------------');
+        // 你能基于 proxy 实现响应式吗，能够监听属性的删除方法
+        let observeStore = new Map()
+        function makeObservable(target) {
+            let handleName = Symbol('handler')
+            observeStore.set(handleName, [])
+            target.obvser = function(handler) {
+                observeStore.get(handleName).push(handler)
+            }
+
+            const proxyHandler = {
+                get(target, key, receiver) {
+                    if(target[key] && typeof target[key] === 'object') {
+                        return new Proxy(target[key], proxyHandler)
+                    }
+                    const success = Reflect.get(...arguments)
+                    if(success) {
+                        observeStore.get(handleName).forEach(handler => handler('GET', key, target[key]))
+                    }
+                    return success
+                },
+                set(target, key, value, receiver) {
+                    const success = Reflect.set(...arguments)
+                    if(success) {
+                        observeStore.get(handleName).forEach(handler => handler('SET', key, target[key]))
+                    }
+                    return success
+                },
+                deleteProperty(target, key) {
+                    const success = Reflect.deleteProperty(...arguments)
+                    if(success) {
+                        observeStore.get(handleName).forEach(handler => handler('DELETE', key))
+                    }
+                    return success
+                }
+            }
+
+            // 创建 proxy，拦截更改
+            return new Proxy(target, proxyHandler)
+        }
+        let user = {}
+        user = makeObservable(user)
+        user.obvser((action, key, val) => {
+            console.log(`${action} key=${key} value=${val || ''}`);
+        })
+        user.name = 'yao' // SET key=name value=yao
+        console.log(user.name) // GET key=name value=yao
+        delete user.name // DELETE key=name value=
+
+    </script>
+</body>
+</html>

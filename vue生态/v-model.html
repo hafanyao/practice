@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue响应式</title>
+</head>
+<body>
+
+    <h2>1. 如何实现一个简单的 V-model 效果？</h2>
+    显示值：<span id="span"></span><br>
+    <input id="input" type="number" placeholder="请输入电话">
+
+    <h2>2. Vue 中 v-model 的原理是什么？</h2>
+
+    
+    <script>
+
+        /*
+            MVVM 模式 C => VM（Vue中 => data() {}）弱化了后台的功能
+            1. 组件化   2. 数据驱动   3. 业务分层
+
+            Vue 渲染的第一条线 1次
+            template => render() => 虚拟dom => 真实dom
+
+            Vue 更新 N 次
+
+            1. 简易的 V-model 效果
+            document.getElementById('input').addEventListener('keyup', function(e) {
+                document.getElementById('span').innerText = e.target.value;
+            });
+        */
+       
+
+        let obj = {};
+        Object.defineProperty(obj, 'username', {
+            get: function() {
+                console.log('取值');
+            },
+            set: function(val) {
+                console.log('设置值');
+                document.getElementById('span').innerText = val;
+            }
+        });
+
+        document.getElementById('input').addEventListener('keyup', function(e) {
+            obj.username = e.target.value;
+        });
+        
+    </script>
+</body>
+</html>

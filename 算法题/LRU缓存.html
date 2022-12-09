@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LRU 缓存函数</title>
+</head>
+<body>
+    <script>
+        // LRU 缓存函数
+        class LRUCache {
+            constructor(size){
+                this.size = size
+                this.cache = new Map()
+            }
+            get(key){
+                const hasKey = this.cache.has(key)
+                if(hasKey){
+                    const val = this.cache.get(key)
+                    this.cache.delete(key)
+                    this.cache.set(key, val)
+                    return val
+                }else{
+                    return -1
+                }
+            }
+            set(key, value){
+                const hasKey = this.cache.has(key)
+                if(hasKey){
+                    this.cache.delete(key)
+                }
+                this.cache.set(key, value)
+                if(this.cache.size > this.size){
+                    // this.cache.keys().next().value用于获取最前面（即使用次数最少的key）,然后删除
+                    this.cache.delete(this.cache.keys().next().value)
+                }
+            }
+        }
+        const cache = new LRUCache(2)
+        cache.set(1, 1)
+        cache.set(2, 2)
+        console.log("cache.get(1)", cache.get(1)) // 返回  1
+        cache.set(3, 3) // 该操作会使得密钥 2 作废
+        console.log("cache.get(2)", cache.get(2)) // 返回 -1 (未找到)
+        cache.set(4, 4) // 该操作会使得密钥 1 作废
+        console.log("cache.get(1)", cache.get(1)) // 返回 -1 (未找到)
+        console.log("cache.get(3)", cache.get(3)) // 返回  3
+        console.log("cache.get(4)", cache.get(4)) // 返回  4
+    </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1 - 100 中有多少个 0</title>
+</head>
+<body>
+    <script>
+
+        // 解法1：1-10000 中 xxx（0） 出现的次数
+        (function() {
+            let result = new Array(10000).fill('')
+                .map((_, index) => index + 1)
+                .filter(item => /0/.test(item))
+                .reduce((num, item) => {
+                    return num += (String(item).match(/0/g) || []).length
+                }, 0);
+            console.log(result);
+        })();
+
+
+        // 解法2：start 到 end 中 xxx（0）出现的次数
+        (function() {
+            function statistics(start, end, xxx) {
+                let count = 0 // 计数器
+                // 遍历 start 到 end
+                for (let i = start; i <= end; i++) {
+                    let left = i // 当前要处理的字符
+                    while(left > 0) {
+                        // 获取当前数的每一位
+                        const last = left % 10 // 获取个位数
+                        // 取个位数后的数据
+                        left = parseInt(left / 10)
+                        // console.log(i, last, left)
+                        if(last === xxx) {
+                            count ++
+                        }
+                    }              
+                }
+                return count
+            }
+            console.log(statistics(1, 10000, 0));
+        })();
+    </script>
+</body>
+</html>

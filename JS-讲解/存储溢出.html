@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function getLSUsedSpace() {
+            return Object.keys(localStorage).reduce((total, curKey) => {
+                if (!localStorage.hasOwnProperty(curKey)) {
+                    return total;
+                }
+                total += localStorage[curKey].length + curKey.length;
+                return total;
+            }, 0);
+        };
+        localStorage.clear();
+        localStorage.a = "啊";
+        console.log(getLSUsedSpace()); // 2
+        localStorage.clear();
+        let valLength = 0
+        try {
+            let str = Array.from({
+                length: 5242800
+            }, () => "啊").join("");
+            valLength = str.length;
+            for (let i = 0; i < 10000000000000; i++) {
+                str += "a"
+                valLength += 1;
+                // localStorage.setItem(`kkkkkkkkkk`, str);
+                localStorage.setItem('kkkkkkkkkk', str);
+            }
+
+        } catch (err) {
+            console.error("存储失败", err);
+            console.log("Max:", getLSUsedSpace(), " value Length:", valLength)
+        }
+    </script>
+</body>
+
+</html>

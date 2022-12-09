@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #light {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            border: 5px solid #eee;
+            margin: 200px auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="light"></div>
+    <script>
+        window.onload = function() {
+            // 方案 1
+            function delay(duration) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(resolve, duration);
+                });
+            };
+
+            async function changeColor(color, duration) {
+                document.getElementById('light').style.backgroundColor = color;
+                await delay(duration);
+
+            };
+
+            async function runChange() {
+                await changeColor('green', 3000);
+                await changeColor('yellow', 1000);
+                await changeColor('red', 2000);
+
+                runChange();
+            };
+
+            // runChange();
+
+            // 方案 2
+            const light_config = {
+                'green': 3000,
+                'yellow': 1000,
+                'red': 2000
+            }
+
+            function delay2(duration) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(resolve, duration);
+                });
+            };
+
+            async function changeColor2(color) {
+                document.getElementById('light').style.backgroundColor = color;
+                await delay2(light_config[color]);
+
+            };
+
+            async function runChange2() {
+                for (const item in light_config) {
+                    console.log(item);
+                    await changeColor2(item);
+                };
+
+                runChange2();
+            };
+
+            // runChange2();
+            // console.log(light_config['red']);
+
+            // 方案 3
+            function delay3(delay) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(resolve, delay);
+                });
+            };
+
+            async function changeColor3(el, light_config) {
+                for (const color in light_config) {
+                    document.getElementById(el).style.backgroundColor = color;
+                    await delay3(light_config[color]);
+                };
+
+                changeColor3(el, light_config);
+            };
+
+            // changeColor3('light', {
+            //     'green': 3000,
+            //     'yellow': 1000,
+            //     'red': 2000
+            // });
+
+            console.log("hello world")
+            console.warn("this is a warning")
+            console.error("this is an error")
+            console.info("this is info")
+            console.debug("this is debug")
+            console.trace("show trace")
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实现indexOf</title>
+</head>
+
+<body>
+    <script>
+        /**
+         * 1.如果低版本浏览器不兼容 indexOf
+         * 2.请手写一个 indexOf
+         */
+        if(Array.prototype._indexOf === undefined) {
+            Array.prototype._indexOf = function(val, fromi) {
+                // fromi 开始的索引，如果不传则赋值为 0
+                fromi === undefined && (fromi = 0);
+                for (var i = fromi; i < this.length; i++) {
+                    if(this[i] == val) {
+                        return i;
+                    };
+                };
+                return -1;
+            };
+        };
+        var arr = [1, 2, 3, 2, 1];
+        console.log(arr._indexOf(2, 2));
+    </script>
+</body>
+
+</html>

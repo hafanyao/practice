@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 1 - <details>标签向用户提供所需的详细信息。
+        如果你要按需向用户显示内容，请使用此标签。默认情况下，小部件是关闭的。
+        打开时，它会展开并显示其中的内容。
+        <summary>标签与<details>一起使用来指定可见的标题。 -->
+            <details>
+                <summary>Click Here to get the user details</summary>
+                <table>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Job</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Adam</td>
+                        <td>Huston</td>
+                        <td>UI/UX</td>
+                    </tr>
+                </table>
+            </details>
+
+    <!-- 2 - contenteditable是一个可以在元素上设置以使内容可编辑的属性。
+        它适用于<div>、<p>、<ul>等元素。你必须像这样指定它，
+        例如<element contenteditable="true|false">。
+        注意，当元素上没有设置contenteditable属性时，它将继承自其父元素。 -->
+    <div>
+        <h2> Shoppping List(Content Editable) </h2>
+        <ul class="content-editable" contenteditable="true">
+            <li> 1. Milk </li>
+            <li> 2. Bread </li>
+            <li> 3. Honey </li>
+        </ul>
+    </div>
+
+    <!-- 3 - <map>标签有助于定义图像映射。图像映射指的是图像中包含一个或多个可点击区域。
+        <map>标签与<area>标签一起确定可点击区域。
+        可点击区域可以是矩形、圆形或多边形区域这些形状之一。
+        如果不指定形状，就会认为是整个图像。 -->
+    <div>
+        <img src="text.jpg" width="500" height="500" alt="Circus" usemap="#circusmap">
+        <map name="circusmap">
+            <area shape="rect" coords="67,114,207,254" href="elephant.htm">
+            <area shape="rect" coords="222,141,318, 256" href="lion.htm">
+            <area shape="rect" coords="343,111,455, 267" href="horse.htm">
+            <area shape="rect" coords="35,328,143,500" href="clown.htm">
+            <area shape="circle" coords="426,409,100" href="clown.htm">
+        </map>
+    </div>
+
+    <!-- 4 - 使用<mark>标签突出显示文本内容。 -->
+        <p> Did you know, you can <mark>"Highlight something interesting"</mark> just with an HTML tag? </p>
+
+    <!-- 5 - data-*属性用于存储页面或应用程序私有的自定义数据。
+        存储的数据可用于JavaScript代码以创建更深层次的用户体验。 -->
+    <div>
+        <h2> Know data attribute </h2>
+        <div class="data-attribute"
+            id="data-attr"
+            data-custom-attr="You are just Awesome!">
+            I have a hidden secret!
+        </div>
+        <div id="msg"></div>
+        <button onclick="reveal()">Reveal</button>
+    </div>
+    <script>
+        function reveal() {
+            let dataDiv = document.getElementById('data-attr');
+            let value = dataDiv.dataset['customAttr'];
+            document.getElementById('msg').innerHTML = `<mark>${value}</mark>`;
+        }
+    </script>
+
+    <!-- 6 - <output>标签表示计算的结果。通常，此元素定义的区域用于显示某些计算的文本输出。 -->
+    <form oninput="x.value=parseInt(a.value) * parseInt(b.value)">
+        <input type="number" id="a" value="0">
+        * <input type="number" id="b" value="0">
+        = <output name="x" for="a b"></output>
+    </form>
+
+    <!-- 7 - <datalist>标签指定了一个预定义选项列表，并允许用户向其中添加更多选项。
+        它提供了autocomplete功能，允许你通过预输入来获取所需的选项。 -->
+    <form action="" method="get">
+        <label for="fruit">Choose your fruit from the list:</label>
+        <input list="fruits" name="fruit" id="fruit">
+            <datalist id="fruits">
+                <option value="Apple">
+                <option value="Orange">
+                <option value="Banana">
+                <option value="Mango">
+                <option value="Avacado">
+            </datalist>
+            <input type="submit">
+        </form>
+
+    <!-- 8 - range是对范围选择器指定滑块类型的一种输入类型。 -->
+    <div>
+        <form method="post">
+            <input type="range"
+                   name="range"
+                   min="0"
+                   max="100"
+                   step="1"
+                   value=""
+                   onchange="changeValue(event)" />
+        </form>
+        <div class="range">
+            <output id="output" name="result">  </output>
+        </div>
+    </div>
+
+    <!-- 9 - 使用<meter>标签测量给定范围内的数据。 -->
+    <div>
+        <label for="home">/home/atapas</label>
+        <meter id="home" value="4" min="0" max="10">2 out of 10</meter><br>
+
+        <label for="root">/root</label>
+        <meter id="root" value="0.6">60%</meter><br>
+    </div>
+
+    <!-- 10 - 不要将<meter>标签用于进度条功能。HTML5有专门的<Progress>标签。 -->
+    <div>
+        <label for="file">Downloading progress:</label>
+        <progress id="file" value="32" max="100"> 32% </progress>
+    </div>
+
+    <!-- 11 - input 使用正则表达式指定模式来验证输入 -->
+    <input type="password"
+       name="password"
+       id="password"
+       placeholder="6-20 chars, at least 1 digit, 1 uppercase and one lowercase letter"
+       pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$" autofocus required>
+</body>
+</html>

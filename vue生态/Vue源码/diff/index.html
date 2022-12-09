@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>diff 算法</title>
+</head>
+<body>
+    <div id="app">旧节点</div>
+    <button id="btn">按钮</button>
+
+    <script>
+
+        // 获取真实 dom
+        const container = document.getElementById('app')
+
+        // 虚拟节点
+        // 1. tag 不同 - 无 child
+        const node1 = h('h1', {}, 'hello diff')
+        // 2. tag 不同 - 有 child
+        const node2 = h('ul', {}, [
+            h('li', {}, 'a'),
+            h('li', {}, 'b'),
+            h('li', {}, 'c')
+        ])
+        // 3. tag 相同 - 无 child
+        const node3 = h('div', {}, 'hello patch')
+        // 4. tag 相同 - 有 child
+        const node4 = h('div', {}, [
+            h('span', {}, 'hello-'),
+            h('span', {}, 'diff-'),
+            h('span', {}, 'patch')
+        ])
+        // patch(container, node4)
+
+        // 5. tag 相同 - 都有 child
+        const node5 = h('ul', {}, [
+            h('li', {key: 'a'}, 'a'),
+            h('li', {key: 'b'}, 'b'),
+            // h('li', {key: 'c'}, 'c'),
+            h('li', {key: 'd'}, 'd'),
+            h('li', {key: 'e'}, 'e'),
+        ]), node6 = h('ul', {}, [
+            h('li', {key: 'c'}, 'c'),
+            h('li', {key: 'b'}, 'b'),
+            h('li', {key: 'a'}, 'e'),
+            h('li', {key: 'a'}, 'a'),
+            h('li', {key: 'd'}, 'd'),
+        ])
+
+        patch(container, node5)
+        document.getElementById('btn').onclick = function() {
+            patch(node5, node6)
+        }
+
+
+
+        function h(sel, data, params) {
+            // h 函数的第三个参数是字符串类型（没有子元素）
+            if(typeof params === 'string') {
+                return vnode(sel, data, undefined, params, undefined)
+            }else if(Array.isArray(params)) {
+            // h 函数的第三个参数是否为数组类型（有子元素）
+                const children = []
+                for (const item of params) {
+                    children.push(item)
+                }
+                return vnode(sel, data, children, undefined, undefined)
+            }
+        }
+
+
+
+        function vnode(sel, data, children, text, elm) {
+            const key = data.key
+            return {
+                sel,
+                data,
+                children,
+                text,
+                elm,
+                key
+            }
+        }
+
+
+
+        function createElement(vnode) {
+            const domNode = document.createElement(vnode.sel)
+            // 判断有没有子节点 -> children
+            if(vnode.children === undefined) {
+                domNode.innerText = vnode.text
+            }else if(Array.isArray(vnode.children)) {
+                // 有子节点 children，则递归创建节点
+                for (const child of vnode.children) {
+                    const chilDom = createElement(child)
+                    domNode.appendChild(chilDom)
+                }
+            }
+            // 补充 elm 属性
+            vnode.elm = domNode
+            return domNode
+        }
+        
+
+
+        /*
+            diff 算法核心：
+                用旧的虚拟节点与新的节点对比，把新的虚拟节点生成 dom 放入页面中
+            
+            新旧节点替换规则：
+                1. 如果新旧节点不同，直接删除重建
+        */
+        function patch(oldVnode, newVnode) {
+            /*
+                新旧节点对比：
+                1. 如果 sel 为 undefined 则为真实 dom -> 并将其转换为虚拟节点
+            */
+            if(oldVnode.sel === undefined) {
+                oldVnode = vnode(
+                    oldVnode.tagName.toLowerCase(),
+                    {},
+                    [],
+                    undefined,
+                    oldVnode
+                )
+            }
+            // 2. 判断新旧节点是否为同一节点
+            if(oldVnode.sel === newVnode.sel) {
+                // 如果是，判断条件非常复杂
+                patchVnode(oldVnode, newVnode)
+            }else { // 如不是，则直接删除替换
+                // 把新节点转换为 真实dom 节点
+                const newVnodeEl = createElement(newVnode)
+                // 获取旧节点的真实 dom，虚拟节点的 elm 也就是真实节点
+                const oldVnodeEl = oldVnode.elm
+                // 创建新节点
+                if(newVnodeEl) {
+                    oldVnodeEl.parentNode.insertBefore(newVnodeEl, oldVnodeEl)
+                }
+                // 删除旧节点
+                oldVnodeEl.parentNode.removeChild(oldVnodeEl)
+            }
+        }
+    
+    
+        
+        function patchVnode(oldVnode, newVnode) {
+            // 判断新节点有没有子节点 children
+            if(newVnode.children === undefined) {
+                // 新节点文本 和 旧节点文本 是否一样
+                if(newVnode.text !== oldVnode.text) {
+                    oldVnode.elm.innerText = newVnode.text
+                }
+            }else {
+                // 新 旧节点都有 children - 最复杂 **
+                if(oldVnode.children !== undefined && oldVnode.children.length) {
+                    // diff 核心
+                    // 旧的真实 dom / 旧的虚拟 dom / 新的虚拟 dom
+                    updateChildren(oldVnode.elm, oldVnode.children, newVnode.children)
+                }else { // 新有旧无
+                    // 遍历新的子节点，创建 dom 元素
+                    oldVnode.elm.innerHTML = ''
+                    for (const child of newVnode.children) {
+                        const chilDom = createElement(child)
+                        oldVnode.elm.appendChild(chilDom)
+                    }
+                }
+            }
+        }
+
+
+
+        function updateChildren(oldDom, oldVnode, newVnode) {
+            let oldStartIdx = 0, // 旧前索引
+                oldEndIdx = oldVnode.length - 1, // 旧后索引
+                newStartIdx = 0, // 新前索引
+                newEndIdx = newVnode.length - 1 // 新后索引
+
+            let oldStartVnode = oldVnode[0], // 旧前虚拟节点
+                oldEndVnode = oldVnode[oldEndIdx], // 旧后虚拟节点
+                newStartVnode = newVnode[0], // 新前虚拟节点
+                newEndVnode = newVnode[newEndIdx] // 新后虚拟节点
+
+            while(oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+                if(oldStartVnode === undefined) {
+                    oldStartVnode = oldVnode[++ oldStartIdx]
+                }else if(oldEndVnode === undefined) {
+                    oldEndVnode = oldVnode[-- oldEndIdx]
+                }else if(sameVnode(oldStartVnode, newStartVnode)) {
+                    // 情况 1: 旧前 新前
+                    console.log('111');
+                    patchVnode(oldStartVnode, newStartVnode)
+                    if(newStartVnode) newStartVnode.elm = oldStartVnode?.elm
+                    oldStartVnode = oldVnode[++ oldStartIdx]
+                    newStartVnode = newVnode[++ newStartIdx]
+
+                }else if(sameVnode(oldEndVnode, newEndVnode)) {
+                    // 情况 2: 旧后 新后
+                    console.log('222');
+                    patchVnode(oldEndVnode, newEndVnode)
+                    if(newEndVnode) newEndVnode.elm = oldEndVnode?.elm
+                    oldEndVnode = oldVnode[-- oldEndIdx]
+                    newEndVnode = newVnode[-- newEndIdx]
+
+                }else if(sameVnode(oldStartVnode, newEndVnode)) {
+                    // 情况 3: 旧前 新后
+                    console.log('333');
+                    patchVnode(oldStartVnode, newEndVnode)
+                    if(newEndVnode) newEndVnode.elm = oldStartVnode?.elm
+                    // 把旧前指定的节点移动到旧后指定的节点之后
+                    oldDom.insertBefore(oldStartVnode.elm, oldEndVnode.elm.nextSibling)
+                    oldStartVnode = oldVnode[++ oldStartIdx]
+                    newEndVnode = newVnode[-- newEndIdx]
+
+                }else if(sameVnode(oldEndVnode, newStartVnode)) {
+                    // 情况 4: 旧后 新前
+                    console.log('444');
+                    patchVnode(oldEndVnode, newStartVnode)
+                    if(newStartVnode) newStartVnode.elm = oldEndVnode?.elm
+                    // 把旧后指定的节点移动到旧前指定的节点之前
+                    oldDom.insertBefore(oldEndVnode.elm, oldStartVnode.elm)
+                    oldEndVnode = oldVnode[-- oldEndIdx]
+                    newStartVnode = newVnode[++ newStartIdx]
+
+                }else {
+                    /*
+                        情况 5: 以上全部满足，查找
+                        创建一个对象，存储虚拟节点（判断新旧间有无相同节点）
+                    */
+                    console.log('555');
+                    const keyMap = {}
+                    for (let i = oldStartIdx; i <= oldEndIdx; i++) {
+                        const key = oldVnode[i]?.key
+                        if(key) keyMap[key] = i
+                    }
+
+                    // 在旧节点中查找新前指向的节点
+                    let idxInOld = keyMap[newStartVnode.key]
+                    // 如果存在则说明该节点在新旧虚拟节点中都存在
+                    if(idxInOld) {
+                        const elmMove = oldVnode[idxInOld]
+                        patchVnode(elmMove, newStartVnode)
+                        // 处理过的节点在旧虚拟节点中设置为 undefined
+                        oldVnode[idxInOld] = undefined
+                        oldDom.insertBefore(elmMove.elm, oldStartVnode.elm)
+                    }else {
+                        // 如果没有找到则说明是一个新的节点（创建）
+                        oldDom.insertBefore(createElement(newStartVnode), oldStartVnode.elm)
+                    }
+
+                    // 新数据指针 +1
+                    newStartVnode = newVnode[++ newStartIdx]
+                }
+            }
+            /*
+                结束 while 只有两种情况 - 新增/删除
+                1. oldStartIdx > oldEndIdx
+                2. newStartIdx > newEndIdx
+            */
+            if(oldStartIdx > oldEndIdx) {
+                const before = newVnode[newEndIdx + 1] ? newVnode[newEndIdx + 1].elm : null
+                for (let i = newStartIdx; i <= newEndIdx; i++) {
+                    oldDom.insertBefore(createElement(newVnode[i]), before)
+                }
+            }else {
+                for (let i = oldStartIdx; i <= oldEndIdx; i++) {
+                    oldDom.removeChild(oldVnode[i].elm)
+                }
+            }
+
+        }
+
+
+        // 判断两个虚拟节点是否为同一节点
+        function sameVnode(vnode1, vnode2) {
+            return vnode1.key === vnode2.key
+        }
+    </script>
+
+</body>
+</html>
