@@ -227,6 +227,7 @@
         function iteratorPromise_2(arr) {
             let res = Promise.resolve();
             arr.forEach(promis => promis());
+            console.log(res);
         }
         iteratorPromise_2(proArr2)
 

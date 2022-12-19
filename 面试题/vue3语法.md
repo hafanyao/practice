@@ -115,14 +115,14 @@
         ```
     9. emit => 子传父
         ```js
-            // 父组件传递
+            // 子组件传递
             <script setup>
                 const name = ref('yao')
                 const change = () => {
                     emit(fn)
                 }
             </script>
-            // 子组件接受
+            // 父组件接收
             <children @fn='change'></children>
             <script setup>
                 const change = (str) => {
