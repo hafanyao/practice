@@ -208,20 +208,7 @@
 
 
 
-16. Vue实例挂载的过程中发生了什么
-    1. new Vue的时候调用会调用_init方法
-        定义 $set、 $get 、$delete、$watch 等方法
-        定义 $on、$off、$emit、$off 等事件
-        定义 _update、$forceUpdate、$destroy 生命周期
-    2. 调用 $mount 进行页面的挂载
-    3. 挂载主要通过 mountComponent 方法
-    4. 定义 updateComponent 更新函数
-    5. 执行 render 生成虚拟 DOM
-    6. _update 将虚拟 DOM 生成真实 DOM 结构，渲染到页面中
-
-
-
-17. diff 优化时间复杂度到O(n)
+16. diff 优化时间复杂度到O(n)
     - 同级比较，不跨级比较
     - tag 不同则直接删除重建，不再深度比较
     - tag 和 key 两者都相同，则认为节点相同，不再深度比较
@@ -238,14 +225,14 @@
 
 
 
-18. vdom
+17. vdom
     - vdom 存在的价值：数据驱动视图，控制 dom 操作
     - h 函数返回的是 vnode，createElement 也一样
     - vdom：path(elem, vnode) 和 path(vnode, newVnode)
 
 
 
-19. 路由
+18. 路由
     - hash
         - window.addEventListener('hashchange', {})，监听 hash 变化
     - history
@@ -255,7 +242,7 @@
 
 
 
-20. keep-alive
+19. keep-alive
     ```js
         <div id="app" class='wrapper'>
             <keep-alive>
@@ -276,7 +263,7 @@
 
 
 
-21. 修饰符
+20. 修饰符
     - 键盘修饰符
         1. 系统修饰键（ctrl、alt、meta、shift...）
         2. 普通键（enter、tab、delete、space、esc、up...）
@@ -305,7 +292,7 @@
 
 
 
-22. 自定义指令
+21. 自定义指令
     - 注册一个自定义指令有全局注册与局部注册
     - 全局注册注册主要是用过 Vue.directive 方法进行注册
     - Vue.directive 第一个参数是指令的名字（不需要写上v-前缀），第二个参数可以是对象数据，也可以是一个指令函数
@@ -365,20 +352,20 @@
 
 
 
-20. Observable 是什么
+22. Observable 是什么
     - Vue.observable，让一个对象变成响应式数据。Vue 内部会用它来处理 data 函数返回的对象
 
 
 
-20. props 和 data 优先级谁高
+23. props 和 data 优先级谁高
     props ==> methods ==> data ==> computed ==> watch
 
 
 
-21. 谈一下 MVVM
+24. 谈一下 MVVM
     - 见 Vue源码 / 理论.md
 
 
 
-22. dist 包太大怎么办
+25. dist 包太大怎么办
     - https://www.bilibili.com/video/BV1aR4y1M7Yd/

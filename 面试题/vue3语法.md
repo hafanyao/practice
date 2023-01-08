@@ -34,10 +34,10 @@
             let str = ref('data2')
             watch([msg, str], (newVal, oldVal) => {
                 console.log(newVal, oldVal)
-            },
+            }, {
                 deep: true, // 深度监听
                 immediate: true // 初始化的时候也会触发
-            )
+            })
             // 2. 监听 obj
             let obj = reactive({
                 str: 1,

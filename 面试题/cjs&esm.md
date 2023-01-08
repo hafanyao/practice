@@ -26,7 +26,7 @@
 
 
 ### require 和 import 的区别
-- node编程中最重要的思想就是模块化，import 和 require 都是被模块化所使用
+- node 编程中最重要的思想就是模块化，import 和 require 都是被模块化所使用
     - 遵循规范：
         - require 是 AMD 规范引入方式
         - export/import是 ES6 的一个语法标准，如果要兼容浏览器的话必须转化成 ES5 的语法

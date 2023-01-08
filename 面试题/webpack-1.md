@@ -54,7 +54,7 @@
 
 
 
-04. 谈谈你对 webpack 的看法
+05. 谈谈你对 webpack 的看法
     - WebPack 是一个模块打包工具，可以使用WebPack管理模块依赖，并编绎输出模块们所需的静
     态文件。它能够很好地管理、打包Web开发中所用到的HTML、JavaScript、CSS以及各种静态文件（图
     片、字体等），让开发过程更加高效。对于不同类型的资源，webpack有对应的模块加载器。webpack
@@ -76,7 +76,7 @@
 
 
 
-05. vite 与 webpack 的区别 - npm init @vitejs/app
+06. vite 与 webpack 的区别 - npm init @vitejs/app
 
     - webpack dev 环境下需要将所有模块进行打包，不管文件是否修改都会整个项目 build，
       执行过程先执行入口文件，然后通过 loader 和插件对模块进行编译处理，最后输出结果
@@ -87,7 +87,7 @@
     
 
 
-06. webpack 的构建流程
+07. webpack 的构建流程
     1. 初始化参数: 读取 shell 脚本 和 webpack.config.js 配置，合并参数
     2. 开始编译: 初始化一个 Compiler 对象，加载所有配置，执行 run 方法开始编译
     3. 确定入口: 根据 entry 中的配置找出所有入口文件
@@ -114,12 +114,12 @@
 
 
 
-07. webpack performance
+08. webpack performance
     - 配置如何展示性能提示。例如，如果一个资源超过 250kb，webpack 会对此输出一个警告来通知你。
 
 
 
-08. webpack 性能优化，主要优化两个方面：
+09. webpack 性能优化，主要优化两个方面：
     - 1.优化开发体验 
         - 提升效率
         - 优化构建速度
