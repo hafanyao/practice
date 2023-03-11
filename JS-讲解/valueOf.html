@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>valueOf</title>
+</head>
+    <div>
+        <p>
+            一个对象居然可以等于两个值？猜一猜 console obj 会不会执行，结果会是什么
+        </p>
+        <img src="../images/valueOf-01.awebp">
+        <p>给个总结，相信你已经得出答案，这个大概率会出现在面试题哦</p>
+        <img src="../images/valueOf-02.awebp">
+    </div>
+<body>
+
+    <script>
+        const obj = {
+            i: 1,
+            valueOf: function () {
+                if (this.i === 1) {
+                    this.i++
+                    return 1
+                } else {
+                    return 2
+                }
+            }
+        }
+        if (obj == 1 && obj == 2) {
+            console.log(obj)
+        }
+    </script>
+</body>
+
+</html>
