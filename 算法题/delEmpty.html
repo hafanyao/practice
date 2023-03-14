@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>删除 value 为空的属性</title>
+	</head>
+	<body>
+		<script>
+			/*
+                Remove Empty Fields from JSON
+                JSON is one of the most widely used format to exchange data between a browser and a server. There is a signup page for new users to create an account. Once a user enters all required fields and clicks the "SAVE" button, his/her personal information will be sent to a RESTFul API endpoint in JSON. When the server receives the data in JSON, it needs to remove all the fields with an empty value, before saving it to database. Please write a function that can remove all fields with an empty value, from any JSON input.
+                The solution must be reusable for processing any kind of JSON input, e.g., the JSON field structure and names may change in the future.
+                Following values are considered as empty:
+                • null
+                • Empty array []
+                • Empty object {}
+                • Empty string, such as "" or "   "
+
+                Sample Input
+                {
+                    "first_name": "Jane",
+                    "last_name": "Smith1",
+                    "email": "jane.smith@wyng.com",
+                    "gender": null,
+                    "invitations":[
+                        {
+                            "from": "",
+                            "code": null
+                        }
+                    ],
+                    "company":{
+                        "name": "",
+                        "industries": "test"
+                    },
+                    "address":{
+                        "state": "NY",
+                        "street": "XXXX",
+                        "city": "New York",
+                    }
+                }
+
+                def RemoveEmptyFields(inputJSON): 
+                    # Your implementation
+                    return outputJSON
+            */
+            
+			const data = {
+				gender: null,
+				last_name: '',
+				first_name: 'Jane',
+				email: 'jane.smith@wyng.com',
+				arrr: [],
+				invitations: [
+					{
+						from: '',
+						code: null,
+						aaa: '1123',
+					},
+				],
+                city: {
+					street: '', // 这个怎么处理
+				},
+				company: {
+					name: '',
+					industries: 'test',
+				},
+				address: {
+					state: 'NY',
+					city: 'New York',
+				},
+                
+			}
+
+			function delEmpty(data) {
+				const keys = Object.keys(data)
+				for (let i = 0; i < keys.length; i++) {
+					const item = data[keys[i]]
+					if (!item) delete data[keys[i]]
+					if (Array.isArray(item)) {
+						if (!item.length) delete data[keys[i]]
+						item.forEach((i) => delEmpty(i))
+					}
+					if (
+						Object.prototype.toString.call(item) ===
+						'[object Object]'
+					) {
+						if (!Object.keys(item).length) delete data[keys[i]]
+						delEmpty(item)
+					}
+				}
+				return data
+			}
+
+			const res = delEmpty(data)
+			console.log(res)
+		</script>
+	</body>
+</html>
