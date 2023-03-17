@@ -2,8 +2,9 @@
     1. 取消 v-for 中的 ref 数组
     2. vue2 v-for 高，vue3 v-if 高
     3. vue3 取消 $children，用 $refs 代替
-    4. setup：组合式 API，解决组件过大时代码分散的问题
-    5. computed
+    4. const { book, index } = toRefs(props)
+    5. setup：组合式 API，解决组件过大时代码分散的问题
+    6. computed
         ```js
             // 1
             let obj = reactive({
@@ -27,7 +28,7 @@
                 }
             })
         ```
-    6. watch
+    7. watch
         ```js
             // 1. 监听 ref
             let msg = ref('data')
@@ -57,7 +58,7 @@
                 console.log(msg.value)
             })
         ```
-    7. useRoute
+    8. useRoute
         ```js
             // 参考 'images/全局导入vue.png'
             import { useRoute, useRouter } from 'vue-router'
@@ -94,7 +95,7 @@
             const route = new useRoute
             console.log(route.query)
         ```
-    8. props => 父传子
+    9. props => 父传子
         ```js
             // 子组件接收
             // 方式 1
@@ -113,7 +114,7 @@
                 }
             }
         ```
-    9. emit => 子传父
+    10. emit => 子传父
         ```js
             // 子组件传递
             <script setup>
@@ -130,7 +131,7 @@
                 }
             </script>
         ```
-    10. v-model => 父子组件双向数据
+    11. v-model => 父子组件双向数据
         ```js
             // 父组件
             <children v-model:name='name'></children>
@@ -154,7 +155,7 @@
                 }
             </script>
         ```
-    11. mitt => 兄弟组件通讯 - 类似 bus
+    12. mitt => 兄弟组件通讯 - 类似 bus
         ```js
             /**
              * 下载：yarn add mitt
@@ -181,7 +182,7 @@
                 })
             })
         ```
-    12. 插槽：匿名插槽、具名插槽、作用域插槽、动态插槽
+    13. 插槽：匿名插槽、具名插槽、作用域插槽、动态插槽
         ```js
             // 父组件
             <children>
@@ -229,7 +230,7 @@
                 </div>
             </template>
         ```
-    13. teleport => 传送 - 内置组件
+    14. teleport => 传送 - 内置组件
         ```js
             <teleport to='#container'>
                 <div>
@@ -237,7 +238,7 @@
                 </div>
             </teleport>
         ```
-    14. 动态组件
+    15. 动态组件
         ```js
             <template>
                 <ul>
@@ -270,7 +271,7 @@
                 }
             </script>
         ```
-    15. 异步组件 => 提升性能
+    16. 异步组件 => 提升性能
         依赖插件：npm i @vueuse/core -S
         ```js
             <template>
