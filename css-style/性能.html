@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 性能提升</title>
+    <style>
+        #box {
+            content-visibility: hidden;
+            background-color: rebeccapurple;
+        }
+    </style>
+</head>
+<body>
+    <!--
+        一. content-visibility
+            1. hidden
+                content-visibility: hidden 手动管理可见性
+                上面说到 content-visibility: hidden 的效果与 display: none 类似，
+                但其实两者还是有比较大的区别的：
+
+                    content-visibility: hidden 只是隐藏了子元素，自身不会被隐藏
+                    content-visibility: hidden 隐藏内容的渲染状态会被缓存，所以当它被移除或者设为可见时，
+                                浏览器不会重新渲染，而是会应用缓存，所以对于需要频繁切换显示隐藏的元素，
+                                这个属性能够极大地提高渲染性能。
+
+
+            2. auto
+                content-visibility: auto 跳过渲染工作，
+                可以用来跳过屏幕外的内容渲染，对于这种有大量离屏内容的长列表，可以大大减少页面渲染时间。
+                但是如果浏览器不渲染页面内的一些元素，滚动将是一场噩梦，因为无法正确计算页面高度。
+                因为 content-visibility 会将分配给它的元素的高度（height）视为 0，
+                浏览器在渲染之前会将这个元素的高度变为 0，从而使我们的页面高度和滚动变得混乱。
+
+                使用：写在 item 上
+                .card_item {
+                    content-visibility: auto;
+                }
+
+
+        二. contain-intrinsic-size 救场
+            页面在滚动过程中滚动条一直抖动，这是一个不能接受的体验问题，为了更好地实现 content-visibility，
+            浏览器需要应用 size containment 以确保内容的渲染结果不会以任何方式影响元素的大小。
+            这意味着该元素将像空的一样布局。如果元素没有在常规块布局中指定的高度，那么它将是 0 高度。
+            这个时候我们可以使用contain-intrinsic-size来指定的元素自然大小，
+            确保我们未渲染子元素的 div 仍然占据空间，同时也保留延迟渲染的好处。
+                
+                语法：此属性是以下 CSS 属性的简写：
+                （1）contain-intrinsic-width
+                （2）contain-intrinsic-height
+
+                    /* Keyword values */
+                    contain-intrinsic-width: none;
+
+                    /* <length> values */
+                    contain-intrinsic-size: 1000px;
+                    contain-intrinsic-size: 10rem;
+
+                    /* width | height */
+                    contain-intrinsic-size: 1000px 1.5em;
+
+                    /* auto <length> */
+                    contain-intrinsic-size: auto 300px;
+
+                    /* auto width | auto height */
+                    contain-intrinsic-size: auto 300px auto 4rem;
+            
+            contain-intrinsic-size 可以为元素指定以下一个或两个值。如果指定了两个值，
+            则第一个值适用于宽度，第二个值适用于高度。如果指定单个值，则它适用于宽度和高度。
+            我们只需要给添加了content-visibility: auto 的元素添加上 contain-intrinsic-size
+            就能够解决滚动条抖动的问题，这个高度约接近真实渲染的高度效果会越好，
+            如果实在无法知道准确的高度，我们也可以给一个大概的值，也会使滚动条的问题相对减少。
+
+
+        三. 对比
+            1. 1000 个列表元素进行测试的，有 content-visibility 的页面渲染花费时间大概是 37ms，
+            而没有 content-visibility 的页面渲染花费时间大概是 269ms，提升了大概7倍
+
+            2. chrome浏览器 设置 -> 更多工具 -> 任务管理器 查看页面占用内存大小，
+            并不会减少页面占用内存大小，这些元素是真实存在于DOM树中的，并且我们也可以通过JS访问到
+
+
+    -->
+
+    <div id="box">
+        <ul>
+            <li>1</li>
+            <li>1</li>
+            <li>1</li>
+            <li>1</li>
+        </ul>
+    </div>
+</body>
+</html>

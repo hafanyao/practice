@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>navigator</title>
+</head>
+<body>
+    <script>
+        // 当前选项卡是否在后台
+        const isTabActive = () => !document.hidden; 
+        isTabActive()
+
+        // 文字复制到剪贴板
+        const copyText = async (text) => await navigator.clipboard.writeText(text)
+        copyText('单行代码 前端世界')
+
+        // 检查设备类型
+        const judgeDeviceType =
+            () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|OperaMini/i.test(navigator.userAgent) ? 'Mobile' : 'PC';
+        judgeDeviceType()  // PC | Mobile
+    </script>
+</body>
+</html>
