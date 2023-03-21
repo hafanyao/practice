@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>异步任务</title>
+	</head>
+	<body>
+		<!--
+
+            ResizeObserver：
+                    （1）监视 Element 内容盒或边框盒或者 SVGElement 边界尺寸的变化
+
+
+
+            MutationObserver：监视对 DOM 树所做更改的能力
+                    （1）可以用来监听 DOM 的任何变化，比如子元素、属性和文本内容的变化
+
+                    （2）概念上，它很接近事件，可以理解为 DOM 发生变动就会触发 Mutation Observer 事件。
+                但是，它与事件有一个本质不同：事件是同步触发，也就是说，DOM 的变动立刻会触发相应的事件，
+                而 Mutation Observer 则是异步触发，DOM 发生变化并不会马上触发，
+                而是要等到当前所有 DOM 操作都结束才触发，执行时机有点类似于宏任务
+
+                    （3）注册多次不会有任何影响。也就是如果注册了两次，回调函数不会被调用两次，
+                也不必执行两次 disconnect() 以停止观察。使用相同的 observer 实例再次注册不会发生任何变化。
+                当然，如果回调对象不同，那么他会向这个元素添加另一个观察者。
+
+                特点：
+                    a. 它等待所有脚本任务完成后，才会触发（宏任务）。
+                    b. 它把所有 DOM 变动记录封装成一个数组进行处理，而不是单独处理每个 DOM 变动。
+                    c. 它既可以观察 DOM 的所有类型变动，也可以指定只观察某一类型的变动。
+
+
+
+            IntersectionObserver：监听元素位置/元素内容的能力
+                    （1）创建并返回一个IntersectionObserver对象。
+                如果指定rootMargin则会检查其是否符合语法规定，检查阈值以确保全部在 0.0 到 1.0 之间，
+                并且阈值列表会按升序排列。如果阈值列表为空，则默认为一个 [0.0] 的数组。
+
+
+
+            PerformanceObserver：当通过 observe() 方法注册的 条目类型 的 性能条目事件 被记录下来时，调用该观察者回调
+       
+        -->
+		<script>
+			// 异步完成一个函数，并尽量将任务放在微任务中。
+			// 异步完成函数的原理，因为 MutationObserver 实例的 callback 回调函数
+			// 与 IntersectionObserver 都为异步，这是 W3C 规定，而且回调函数为微任务
+			// nextTick 源码中也用到了 MutationObserver 来实现异步调度机制
+			function asyncRun(fun) {
+				// 如果浏览器支持promise
+				if (typeof Promise !== 'undefined') {
+					Promise.resolve().then(fun)
+					// 如果浏览器支持 MutationObserve
+				} else if (typeof MutationObserver !== 'undefined') {
+					const observe = new MutationObserver(fun)
+					const textNode = document.createTextNode('0')
+					observe.observe(textNode, { characterData: true })
+					textNode.data = '1'
+					// 都不支持则放入定时器
+				} else {
+					setTimeout(fun)
+				}
+			}
+
+
+
+			// 终止 observer 之前，对已有 mutationRecords 记录进行处理，可以用 takeRecords 方法获取
+            // https://juejin.cn/post/7032169138638290951
+			let observer = new MutationObserver((mutationRecords) =>
+				console.log(mutationRecords)
+			)
+			observer.observe(document.body, {
+				attributes: true,
+			})
+			// 第一次修改，会入 mutationRecords 数组
+			document.body.className = 'main'
+			// 第二次修改，会入 mutationRecords 数组
+			document.body.className = 'container'
+			// 第三次修改，会入 mutationRecords 数组
+			document.body.className = 'box'
+			// 取到修改记录，可以对其进行处理
+			let mutationRecords = observer.takeRecords()
+			console.log(mutationRecords)
+			// 控制台打印：
+			// (3) [MutationRecord, MutationRecord, MutationRecord]
+			console.log(observer.takeRecords())
+			// 控制台打印：[]
+			// 终止
+			observer.disconnect()
+		</script>
+	</body>
+</html>

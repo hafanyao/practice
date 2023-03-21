@@ -369,3 +369,18 @@
 
 25. dist 包太大怎么办
     - https://www.bilibili.com/video/BV1aR4y1M7Yd/
+
+
+
+26. ref() 和 reactive() - https://juejin.cn/post/7211055301205934138
+    - 区别在于：ref可以同时处理基本数据类型和对象，而reactive只能处理处理对象而支持基本数据类型。
+        - const numberRef = ref(0);           // OK
+        - const objectRef = ref({ count: 0 }) // OK
+        // TS2345: Argument of type 'number' is not assignable to parameter of type 'object'.
+        - const numberReactive = reactive(0);
+        - const objectReactive = reactive({ count: 0}); // OK
+    
+    - 这是因为二者响应式数据实现的方式不同：
+        - ref 是通过一个中间对象 RefImpl 持有数据，并通过重写它的 set 和 get 方法实现数据劫持的，
+        本质上依旧是通过 Object.defineProperty 对 RefImpl 的 value 属性进行劫持。
+        - reactive 则是通过 Proxy 进行劫持的。Proxy 无法对基本数据类型进行操作，导致对基本数据类型束手无策。
