@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map</title>
+</head>
+<body>
+    <script>
+        /*
+            Map 是一个'有序'的键值对集合，它可以存储'任意类型的键和值'，
+            对象增删键值对性能要高于 Object 对象，Object 没有实现迭代协议
+        */
+
+        // 使用 structuredClone 深拷贝
+        const deepCopy = structuredClone(myMap)
+        // Map转对象
+        const myObj = Object.fromEntries(myMap)
+        // 对象转Map
+        const myMap = new Map(Object.entries(myObj))
+
+        /*
+            JSON.stringify(obj, null, 2) 有个第二个参数
+            被称为替换器，它允许我们定义任何自定义类型应该如何序列化
+        */
+        // 将 Map 进行序列化：
+        JSON.stringify(obj, (key, value) => {
+            // Convert maps to plain objects
+            if (value instanceof Map) {
+                return Object.fromEntries(value)
+            }
+            return value
+        })
+        // 反序列化对象转回 Map：
+        JSON.parse(string, (key, value) => {
+            if (value && typeof value === 'object') {
+                return new Map(Object.entries(value))
+            }
+            return value
+        })
+    </script>
+</body>
+</html>
