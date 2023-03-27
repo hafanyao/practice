@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>text文本</title>
+    <style>
+        /* 文字描边 */
+        .stroke {
+            font-size: 50px;
+            color: transparent;
+            text-stroke: 2px crimson;
+            -webkit-text-stroke: 2px crimson;
+        }
+        /* 强调标记 - 可以指定任意字符串/表情符号 */
+        .emphasis {
+            text-emphasis: "⏰";
+        }
+        /* 首字母下沉 */
+        .first-letter::first-letter{
+            font-size: 2rem;
+            color:#ff8A00;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="stroke">NETLIFY</h1>
+    <h1 class="emphasis">Time is a header</h1>
+    <h1 class="first-letter">Gitpod.io</h1>
+
+</body>
+<script>
+    const arr = [1, 2, 3]
+    const item = arr.findIndex(i => i === 0)
+    console.log(item);
+</script>
+</html>

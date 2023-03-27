@@ -8,10 +8,63 @@
 </head>
 <body>
     <script>
+        /**
+         * Reflect：集成 Object 的所有方法，统一、方便
+        */
         // 检查对象是否为空
         const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object;
         isEmpty({}) // true
         isEmpty({a:"not empty"}) //false
+
+        // 对象是否是可扩展
+        Object.isExtensible()
+
+        // 获取目标对象的原型
+        Reflect.getPrototypeOf()
+
+        // 对象设置为不可扩展
+        Reflect.preventExtensions()
+
+        Object.seal()
+        /*
+            Object.seal()方法用于密封一个对象，即将对象设置为不可扩展，
+            同时将对象的所有自有属性都设置为不可配置（包括Symbol值的属性）。
+            也就是说，不能给对象添加新的属性和方法，也不能删除现有的属性和方法、
+            不能修改现有属性和方法的配置。但如果对象的属性和方法是可写的，那该属性和方法仍然可以修改。
+        */
+
+        Object.freeze()
+        /*
+            方法用于冻结一个对象。即将对象设置为不可扩展、
+            将对象的所有自有的属性和方法（包括Symbol值的属性和方法）配置为不可配置、不可写
+        */
+
+        // 三个方法都是紧张扩展
+        Object.seal()
+        Object.freeze()
+        Reflect.preventExtensions()
+
+        /*
+            toJSON 方法
+            可以是任何对象的一部分，作为其属性。
+            JSON.stringify 返回此函数的结果并将其字符串化，而不是将整个对象转换为字符串
+        */
+        const user = {
+            name: "DevPoint",
+            city: "Shenzhen",
+            toJSON() {
+                return `姓名：${this.name}，所在城市：${this.city}`;
+            },
+        }
+        console.log(JSON.stringify(user)); // "姓名：DevPoint，所在城市：Shenzhen"
+
+        /*
+            WeakMap与Map的区别是
+            区别就是垃圾回收器是否回收的问题，WeakMap对象对key是弱引用，
+            如果target对象没有任何引用，可以被垃圾回收器回收，这就需要它了。
+            相对于WeakMap，不管target是否引用，Map都不会被垃圾回收，容易造成内存泄露。
+        */
+        
     </script>
 </body>
 </html>
