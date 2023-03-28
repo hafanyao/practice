@@ -8,6 +8,7 @@
 </head>
 <body>
     <script>
+        let obj = {}
         /**
          * Reflect：集成 Object 的所有方法，统一、方便
         */
@@ -17,15 +18,15 @@
         isEmpty({a:"not empty"}) //false
 
         // 对象是否是可扩展
-        Object.isExtensible()
+        Object.isExtensible(obj)
 
         // 获取目标对象的原型
-        Reflect.getPrototypeOf()
+        Reflect.getPrototypeOf(obj)
 
         // 对象设置为不可扩展
-        Reflect.preventExtensions()
+        Reflect.preventExtensions(obj)
 
-        Object.seal()
+        Object.seal(obj)
         /*
             Object.seal()方法用于密封一个对象，即将对象设置为不可扩展，
             同时将对象的所有自有属性都设置为不可配置（包括Symbol值的属性）。
@@ -33,16 +34,16 @@
             不能修改现有属性和方法的配置。但如果对象的属性和方法是可写的，那该属性和方法仍然可以修改。
         */
 
-        Object.freeze()
+        Object.freeze(obj)
         /*
             方法用于冻结一个对象。即将对象设置为不可扩展、
             将对象的所有自有的属性和方法（包括Symbol值的属性和方法）配置为不可配置、不可写
         */
 
         // 三个方法都是紧张扩展
-        Object.seal()
-        Object.freeze()
-        Reflect.preventExtensions()
+        Object.seal(obj)
+        Object.freeze(obj)
+        Reflect.preventExtensions(obj)
 
         /*
             toJSON 方法
@@ -64,7 +65,7 @@
             如果target对象没有任何引用，可以被垃圾回收器回收，这就需要它了。
             相对于WeakMap，不管target是否引用，Map都不会被垃圾回收，容易造成内存泄露。
         */
-        
+        console.log(Symbol());
     </script>
 </body>
 </html>
