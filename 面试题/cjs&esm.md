@@ -1,4 +1,39 @@
 # https://www.zhihu.com/question/20351507
+
+### 时间轴：CommonJS --> AMD --> CMD --> ES Module
+
+- CommonJS - BravoJS 推广过程中对模块定义的规范化产出
+    1. 常用于：服务器端，node，webpack
+    2. 特点：同步/运行时加载，磁盘读取速度快
+    3. 语法：module.exports => require
+    4. exports 与 module.exports 指向同一个内存
+
+- AMD - RequireJS 推广过程中对模块定义的规范化产出
+    1. 常用于：不常用，CommonJs 的浏览器端实现
+    2. 异步加载：面向浏览器端，为了不影响渲染肯定是异步加载
+    3. 依赖前置：所有依赖必须写在最初的依赖数组中，速度快但浪费资源，不管是否用到
+    4. 语法：define => require
+
+- CMD - SeaJS 推广过程中对模块定义的规范化产出
+    1. 常用于：不常用，根据 CJs 和 AMD 实现，优化了加载方式
+    2. 异步加载
+    3. 按需加载/依赖就近：用到了再引用依赖，方便了开发，缺点是速度和性能较差
+    4. 语法：define => require
+
+- ES module
+    1. 常用于：目前浏览器端的默认标准
+    2. 静态编译：在编译的时候就能确定依赖关系，以及输入和输出的变量
+    3. 兼容：转码 ES5 再执行，import 语法会被转码为 require/exports
+    4. 语法：export / export default => import
+
+- 区别
+    1. CJs 是运行时加载，ESM 是编译时加载
+    2. AMD 推崇依赖前置，CMD 推崇依赖就近；RequireJS 2.0 也可以延迟执行
+    3. require 是赋值过程（可改），import 是解构过程
+    4. module.exports/require 是值的拷贝，export/import 是值的引用
+
+
+
 ### webpack 中的 Module 是指什么
 
 - webpack 支持 ESModule, CommonJS, AMD, Assets(image, font, video, audio, json)
@@ -18,9 +53,10 @@
 
 
 ### webpack moudles 如何表达各种依赖关系
-    * ESM：export => import 语句
     * CommonJS：module.exports => require
     * AMD define require
+    * CMD define require
+    * ESM：export => import
     * css/sass/less @import
 
 
@@ -29,10 +65,10 @@
 - node 编程中最重要的思想就是模块化，import 和 require 都是被模块化所使用
     - 遵循规范：
         - require 是 AMD 规范引入方式
-        - export/import是 ES6 的一个语法标准，如果要兼容浏览器的话必须转化成 ES5 的语法
+        - export/import是 ES6 的一个语法标准，需要兼容转化成 ES5 的语法
     - 调用时间：
         - export/import 是编译时调用，所以必须放在文件开头
-        - require 是运行时调用，所以require理论上可以运用在代码的任何地方
+        - require 是运行时调用，所以 require 理论上可以运用在代码的任何地方
     - 本质：
         - require 是赋值过程。module.exports 的内容是什么，require 结果就是什么，相当于module.exports 的传送门
         - import 是解构过程，但是目前所有的引擎都还没有实现 import，我们在 node 中使用 babel 支持ES6，也仅仅是将 ES6 转码为 ES5 再执行，import 语法会被转码为 require
@@ -51,24 +87,11 @@
 
 
 
-### AMD/CMD/UMD
-- 区别
-    1. CMD 是 commonJs 规范
-    2. AMD 是依赖前置 - 提前 require
-    3. CMD 则就近依赖 - 需要时 require - 按需加载
-    4. CommonJS/AMD 都是 require，ESM 则是 import
-    5. UMD - 通过模块定义 - 判断/兼容 服务器和浏览器环境
-        - 如果是 AMD，则使用 AMD 方式定义
-        - 如果是 cjs，则使用 CMD 方式定义
-        - 如果都不是，则挂在全局对象
-
-
-
 ### webpack 解析 - 大圣
+    - CJs：node => module.exports/require
     - AMD：依赖前置，提前 require
     - CMD：cjs 规范，就近依赖
-    - cjs：node => module.exports/require
-    - es6：es6 => export/import
+    - ESM：es6 => export/import
 
     - webpack 特点
         1. 是一个自执行函数，传入一个对象
