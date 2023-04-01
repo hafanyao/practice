@@ -36,11 +36,13 @@
 
 
 
-- nextTick：
+- nextTick - https://juejin.cn/post/6844903919789801486
     - 本次循环的事情放到下一次循环去做，视图的下一次更新，
     - 也就是本次 updated 之后，所以实际是在 munted 之后
-    - 本质是对 JavaScript 执行原理 EventLoop 的一种应用。
+    - 本质是对 JavaScript 执行原理 EventLoop 的一种应用
     - 核心是利用了如 Promise、MutationObserver、setImmediate、setTimeout 的原生 JavaScript 方法来模拟对应的微/宏任务的实现
+    - 2.0 之前 nextTick 原理是利用 MutationObserver 异步回调函数在微任务队列中排列。
+    - 3.0 改用了 MessageChannel，被弃用的原因：对于 iOS UIWebView，页面运行一段时间会中断（兼容性）
 
 
 

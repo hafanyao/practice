@@ -1,52 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LRU 缓存函数</title>
-</head>
-<body>
-    <script>
-        // LRU 缓存函数
-        class LRUCache {
-            constructor(size){
-                this.size = size
-                this.cache = new Map()
-            }
-            get(key){
-                const hasKey = this.cache.has(key)
-                if(hasKey){
-                    const val = this.cache.get(key)
-                    this.cache.delete(key)
-                    this.cache.set(key, val)
-                    return val
-                }else{
-                    return -1
-                }
-            }
-            set(key, value){
-                const hasKey = this.cache.has(key)
-                if(hasKey){
-                    this.cache.delete(key)
-                }
-                this.cache.set(key, value)
-                if(this.cache.size > this.size){
-                    // this.cache.keys().next().value用于获取最前面（即使用次数最少的key）,然后删除
-                    this.cache.delete(this.cache.keys().next().value)
-                }
-            }
-        }
-        const cache = new LRUCache(2)
-        cache.set(1, 1)
-        cache.set(2, 2)
-        console.log("cache.get(1)", cache.get(1)) // 返回  1
-        cache.set(3, 3) // 该操作会使得密钥 2 作废
-        console.log("cache.get(2)", cache.get(2)) // 返回 -1 (未找到)
-        cache.set(4, 4) // 该操作会使得密钥 1 作废
-        console.log("cache.get(1)", cache.get(1)) // 返回 -1 (未找到)
-        console.log("cache.get(3)", cache.get(3)) // 返回  3
-        console.log("cache.get(4)", cache.get(4)) // 返回  4
-    </script>
-</body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>LRU 缓存函数</title>
+	</head>
+	<body>
+		<script>
+			// LRU 缓存函数
+			class LRUCache {
+				constructor(size) {
+					this.size = size
+					this.cache = new Map()
+				}
+				get(key) {
+					const hasKey = this.cache.has(key)
+					if (hasKey) {
+						const val = this.cache.get(key)
+						this.cache.delete(key)
+						this.cache.set(key, val)
+						return val
+					} else {
+						return -1
+					}
+				}
+				set(key, value) {
+					const hasKey = this.cache.has(key)
+					if (hasKey) {
+						this.cache.delete(key)
+					}
+					this.cache.set(key, value)
+					if (this.cache.size > this.size) {
+						// this.cache.keys().next().value用于获取最前面（即使用次数最少的key）,然后删除
+						this.cache.delete(this.cache.keys().next().value)
+					}
+				}
+			}
+			const cache = new LRUCache(2)
+			cache.set(1, 1)
+			cache.set(2, 2)
+			console.log('cache.get(1)', cache.get(1)) // 返回  1
+			cache.set(3, 3) // 该操作会使得密钥 2 作废
+			console.log('cache.get(2)', cache.get(2)) // 返回 -1 (未找到)
+			cache.set(4, 4) // 该操作会使得密钥 1 作废
+			console.log('cache.get(1)', cache.get(1)) // 返回 -1 (未找到)
+			console.log('cache.get(3)', cache.get(3)) // 返回  3
+			console.log('cache.get(4)', cache.get(4)) // 返回  4
+		</script>
+		<script>
+			class LRUCache {
+				constructor(capacity) {
+					this.capacity = capacity // 缓存容量
+					this.map = new Map() // 使用Map存储键值对
+				}
+
+				// 获取键对应的值，如果不存在则返回 -1
+				get(key) {
+					if (this.map.has(key)) {
+						let value = this.map.get(key)
+						this.map.delete(key) // 删除该键值对
+						this.map.set(key, value) // 将该键值对重新插入到Map末尾，表示最近使用过
+						return value
+					} else {
+						return -1
+					}
+				}
+
+				// 设置或更新键和值，如果超过缓存容量，则删除最久未使用的键值对
+				put(key, value) {
+					if (this.map.has(key)) {
+						this.map.delete(key)
+					} else if (this.map.size >= this.capacity) {
+						// 如果Map中没有该键，且已达到缓存容量上限
+						let oldestKey = this.map.keys().next().value // 获取Map中第一个（最久未使用）的键
+						this.map.delete(oldestKey)
+					}
+					this.map.set(key, value) // 将新的或更新的键值对插入到Map末尾，表示最近使用过
+				}
+			}
+		</script>
+	</body>
 </html>

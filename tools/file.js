@@ -63,3 +63,25 @@ export const downloadFile = fileUrl => {
 		document.body.removeChild(iframe);
 	};
 };
+
+// https://mp.weixin.qq.com/s/Cw06Yg2yi4yHD1YgiAawCw
+//************** base64编码 转换 utf-8 值 ***************//
+function utf8_to_b64(str) {
+    return window.btoa(unescape(encodeURIComponent(str)));
+}
+function b64_to_utf8(str) {
+    return decodeURIComponent(escape(window.atob(str)));
+}
+console.log(utf8_to_b64('✓ à la mode')); // "4pyTIMOgIGxhIG1vZGU="
+console.log(b64_to_utf8('4pyTIMOgIGxhIG1vZGU=')); // "✓ à la mode"
+
+// 相对地址转换为绝对地址 - 基于当前页面的相对地址转换为绝对地址
+function realativeToAbs(href) {
+    let aEl = document.createElement("a");
+    aEl.href = href;    
+    const result = aEl.href;
+    aEl = null;
+    return result;
+}
+console.log("realativeToAbs", realativeToAbs("../a/b/b/index.html"));
+// realativeToAbs http://127.0.0.1:5500/a/b/b/index.html

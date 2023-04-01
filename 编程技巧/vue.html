@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue 编程技巧</title>
+</head>
+<body>
+    
+    <!-- 监听子组件的生命周期回调 -->
+    <child @hook:mounted="listenChildMounted" />
+    
+    <script>
+        // 相比于 beforeDestroy 卸载的写法，这个写法的好处在于可以开启一个事件监听器的同时，
+        // 就在 beforeDestroy 生命周期中挂载一个删除事件监听器的事件。
+        // 比上面的写法会更加安全，更加有助于避免内存泄露并防止事件冲突
+        new Vue({
+            mounted () {
+                window.addEventListener('resize', this.resizeHandler);
+                this.$on("hook:beforeDestroy", () => {
+                    window.removeEventListener('resize', this.resizeHandler);
+                })
+            }
+        })
+
+
+        Object.freeze()
+    </script>
+</body>
+</html>
