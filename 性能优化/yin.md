@@ -11,7 +11,7 @@
     02. http 是基于 TPC 实现连接的 -> 对接服务器通道的过程也就是 TCP
         - 优化点：1.x 升级到 2.0
         - UDP vs TCP
-        - keep-alive
+        - keep-alive - 属于长链接
         - 2.0 多个并发请求复用同一链路，没有并发限制
     03. http 是无状态连接 -> TCP 连接是有状态的
         - socket 连接，本质是一个封装后的 TCP
