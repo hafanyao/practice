@@ -192,19 +192,32 @@
     - cache-control: no-store（表示禁止任何缓存策略 - 优先级第二）
         - 不缓存，这个会让客户端、服务器都不缓存，也就没有所谓的强缓存、协商缓存了。
 
-
     - 协商缓存 - etag 和 last-modified
-        - response header里面的设置 etag（etag 需要计算会有性能损耗）
+        - response header 里面的设置 etag（etag 需要计算会有性能损耗）
         - etag：每个文件有一个，改动文件了就变了，就是个文件hash，每个文件唯一
-        - 请求资源时，把用户本地该资源的 etag 同时带到服务端，服务端和最新资源做对比。
-        - 如果资源没更改，返回304，浏览器读取本地缓存。
-        - 如果资源有更改，返回200，返回最新的资源。
-        - 补充一点，response header中的etag、last-modified在客户端重新向服务端发起请求时，会在request header中换个key名：
-        
-        - 304缓存的原理：服务器首先产生ETag，服务器可在稍后使用它来判断页面是否已经被修改
+        - 请求资源时，把用户本地该资源的 etag 同时带到服务端，服务端和最新资源做对比
         - 顺序 Cache-Control／Expires，再 ETag，最后 Last-Modified 都满足才 304
+        - 304 缓存的原理：服务器首先产生 ETag，服务器可在稍后使用它来判断页面是否已经被修改
         - 设置强缓存相关字段有 expires，cache-control。cache-control 的优先级高于 expires
-        - 协商缓存相关字段有 Last-Modified/If-Modified-Since，Etag/If-None-Match
+        - res header 中的 etag、last-modified 在重新向服务端发起请求时，会在 req header 中换个 key 名
+        - 协商缓存相关字段 Last-Modified/If-Modified-Since，Etag/If-None-Match (都是成对的，为了对比文件修改时间)
+    
+    - Last-Modified 和 ETag 的区别
+        - Etag 感知文件精准度要高于 Last-Modified
+        - 同时使用时，服务器校验优先级 Etag/If-None-Match
+        - Last-Modified 性能优于 Etag，Etag 生成过程中需要服务器额外开销，影响服务器的性能，所以它并不能完全替代 Last-Modified，只能作为补充和强化
+
+    - Expires 和 Cache-Control 的区别
+        - 两者同时存在的话 Cache-Control 优先级高于 Expires
+        - Expires 是HTTP/1.0中的，Cache-Control 是HTTP/1.1中的
+        - Expires 是为了兼容，在不支持 HTTP/1.1 的情况下才会发生作用
+        - 有的浏览器认识 Cache-Control，有的浏览器不认识，不认识的情况下再找 Expires
+
+    - 总结
+        - 有些缓存是从磁盘读取，有些缓存是从内存读取，有什么区别？答：从内存读取的缓存更快
+        - 所有 304 的资源都是协商缓存，所有标注（从内存中读取/从磁盘中读取）的资源都是强缓存
+        - 关于协商缓存，etag 并不是 last-modified 的完全替代方案，而是补充方案，具体用哪一个，取决于业务场景
+        - 关于强缓存，cache-control 是 Expires 的完全替代方案，可以用 cache-control 的情况下不使用 expires
 
 
 
