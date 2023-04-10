@@ -12,6 +12,7 @@
 │   │   ├── common/             # 共用的全局组件，loading 组件，提示组件等
 │   │   ├── UItemp/             # UI组件，如：根据 element 自定义的一些组件
 │   │   ├── 'PageName'          # 功能组件，如：contextMenu
+│   │   ├── ...                 # 
 │   ├── constant/         		# 存放 js 常量、公共配置等
 │   ├── hook/         			# 自定义 hook
 │   ├── lib/          			# 存放引用的库
