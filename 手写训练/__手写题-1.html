@@ -389,7 +389,12 @@
         }
         function compose2() {
             const fns = [...arguments]
-            return start => fns.reduce((total, fn) => fn(total), start)
+            // const start = fns.reduce((total, fn) => {
+            //     return fn(total)
+            // })
+            const start = () => fns.reduce((total, fn) => fn(total), start)
+            return start
+            // return start => fns.reduce((total, fn) => fn(total), start)
         }
 
     </script>

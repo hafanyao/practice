@@ -39,6 +39,7 @@
         函数式编程 - compose 是非常重要的概念
         redux-compose / applyMiddleWare
         arr.pipe().pipe().pipe() => newArr
+        组合 —— 声明式数据流 —— 是支撑函数式编程最重要的工具之一
     */
     const filterArr = arr => arr.filter(Boolean)
     // 筛选器
