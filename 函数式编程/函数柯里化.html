@@ -41,9 +41,9 @@
             const a5 = currying(add, 1, 2, 3)
             console.log(a5()) // 6
 
-        })();
+        })()
 
-        console.log('------------');
+        console.log('------------')
 
         // 云隐
         (function() {
@@ -84,7 +84,7 @@
                     // arguments: [item]
                     resArr.push(...arguments)
                     // resArr: [item, item, item]
-                    // console.log(resArr);
+                    // console.log(resArr)
                     return inner
                 }
                 inner.toString = function() {
@@ -95,8 +95,8 @@
             // ADD = function() {
                 
             // }
-            console.log('' + ADD(1, 2)(3)(4)(5, 6));
-            console.log(parseInt(ADD(1)(2)(3)(4)(5)));
+            console.log('' + ADD(1, 2)(3)(4)(5, 6))
+            console.log(parseInt(ADD(1)(2)(3)(4)(5)))
 
             return
             // f(x, y, z) => f(x)(y)(z)
@@ -115,7 +115,7 @@
 
         })()
 
-        console.log('------------');
+        console.log('------------')
 
         (function() {
             return
@@ -135,11 +135,11 @@
                 return a + b + c
             }
             
-            let currysum = curry(sum);
+            let currysum = curry(sum)
             console.log(currysum(1, 2, 3))
             console.log(currysum(1)(2)(3))
             console.log(currysum(1, 2)(3))
-        })();
+        })()
 
 
     </script>

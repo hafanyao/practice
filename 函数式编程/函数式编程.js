@@ -28,8 +28,8 @@
     }
     const generatorArr2_1 = generatorArr2(3)
     // 65分
-    console.log(generatorArr2_1(array));
-    console.log(generatorArr(array));
+    console.log(generatorArr2_1(array))
+    console.log(generatorArr(array))
 
 
 
@@ -59,8 +59,8 @@
     
     const modifyArr = compose(filterArr, multipty2, filterBigger10)
     const modifyArr3 = compose(filterArr, multipty3, filterBigger10)
-    console.log('---', modifyArr(array));
-    console.log('---', modifyArr3(array));
+    console.log('---', modifyArr(array))
+    console.log('---', modifyArr3(array))
 
 
 
@@ -76,5 +76,5 @@
     function m3(num) {
         return num * 3
     }
-    console.log(generatorArr_1(array, m3));
+    console.log(generatorArr_1(array, m3))
     
