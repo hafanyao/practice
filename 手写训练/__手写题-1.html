@@ -15,16 +15,17 @@
     <script>
 
         (function feibo(num) {
-            let a = 0, b = 1, c = null;
-            const res = [a, b]
+            let a = 0, b = 1, c = null, res = [a, b]
             for (let i = 0; i < num; i++) {
                 c = a + b
                 a = b
                 b = c
                 res.push(c)
             }
-            console.log(res);
+            console.log(res)
         })(10)
+
+
 
         // function flat1(array) {
         //     return array.reduce((res, item) => {
@@ -33,7 +34,6 @@
         // };
         function flat1(array) {
             return array.reduce((res, item) => {
-                // return res.push(typeof item === 'object' ? flat1(item) : item)
                 return res.concat(Array.isArray(item) ? flat1(item) : item)
             }, [])
         };
@@ -49,6 +49,15 @@
             },
             { name: 'b', children: [{ name: 'b1' }, { name: 'b2' }, { name: 'b3' }] }]
         
+        // function depth(data, res = []) {
+        //     data.forEach(item => {
+        //         res.push(item.name)
+        //         if(item.hasOwnProperty('children')) {
+        //             depth(item.children, res)
+        //         }
+        //     })
+        //     return res
+        // }
         function depth(data, res = []) {
             data.forEach(item => {
                 res.push(item.name)
@@ -58,13 +67,23 @@
             })
             return res
         }
-        // function depth(data, res = []) {
-            
-        // }
         console.log(depth(data));
 
 
 
+        // function breadth(data) {
+        //     const res = [], queue = [...data]
+        //     while(queue.length) {
+        //         const item = queue.shift()
+        //         res.push(item.name)
+        //         if(item.hasOwnProperty('children')) {
+        //             queue.push(...item.children)
+        //         }
+        //     }
+        //     return res
+        // }
+        // function breadth(data) {
+        // }
         function breadth(data) {
             const res = [], queue = [...data]
             while(queue.length) {
@@ -76,9 +95,6 @@
             }
             return res
         }
-        // function breadth(data) {
-            
-        // }
         console.log(breadth(data));
 
 
@@ -96,6 +112,8 @@
         // function debounce(handle, delay) {
             
         // }
+
+
 
         function throttle(handle, delay) {
             // 时间段触发
@@ -125,7 +143,6 @@
                 }
             }
             let maxStr = '', maxNum = 1
-            console.log(charObj);
             const keys = Object.keys(charObj)
             for (const key of keys) {
                 if(charObj[key] > maxNum) {
@@ -144,7 +161,7 @@
 
         console.log('------------迭代器------------');
         // 对象遍历
-        var obj = {
+        var obj2 = {
             count: 0,
             // 迭代器：加上这个属性就代表可迭代
             [Symbol.iterator]: () => {
@@ -166,9 +183,27 @@
                 }
             }
         }
-        // obj = {
-            
-        // }
+        obj = {
+            count: 0,
+            [Symbol.iterator]: () =>  {
+                return {
+                    next: () => {
+                        obj.count ++
+                        if(obj.count <= 3) {
+                            return {
+                                done: false,
+                                value: obj.count
+                            }
+                        }else {
+                            return {
+                                done: true,
+                                value: undefined
+                            }
+                        }
+                    }
+                }
+            }
+        }
         // 对象不能通过 for of 遍历
         for(const item of obj) {
             console.log(item) // 1 2 3
@@ -204,29 +239,37 @@
 
 
         var ADD = function() {
-                // 输入：将 arguments 类数组转化为数组
-                let args = Array.from(arguments)
-                // let args = Array.prototype.slice.call(arguments)
-                // 内层处理
-                let inner = function() {
-                    // 内外层参数合并
-                    args.push(...arguments)
-                    return inner
-                }
-                // 重写函数的 toString 方法
-                inner.toString = function() {
-                    return args.reduce((pre, cur) => pre + cur)
-                }
+            // 输入：将 arguments 类数组转化为数组
+            let args = Array.from(arguments)
+            // let args = Array.prototype.slice.call(arguments)
+            // 内层处理
+            let inner = function() {
+                // 内外层参数合并
+                args.push(...arguments)
                 return inner
             }
-            // ADD = function() {
-                
-            // }
-            console.log('' + ADD(1, 2)(3)(4)(5, 6));
+            // 重写函数的 toString 方法
+            inner.toString = function() {
+                return args.reduce((pre, cur) => pre + cur)
+            }
+            return inner
+        }
+        ADD = function() {
+            let args = Array.from(arguments)
+            let inner = function() {
+                args.push(...arguments)
+                return inner
+            }
+            inner.toString = function() {
+                return args.reduce((pre, cur) => pre + cur)
+            }
+            return inner
+        }
+        console.log('' + ADD(1, 2)(3)(4)(5, 6));
 
 
 
-        function deepClone2(target, hash = new WeakMap()) {
+        function deepClone(target, hash = new WeakMap()) {
             if(target === null) {
                 return null
             }
@@ -245,24 +288,24 @@
             const res = Array.isArray(target) ? [] : {}
             hash.set(target, res)
             Reflect.ownKeys(target).forEach(key => {
-                res[key] = deepClone2(target[key], hash)
+                res[key] = deepClone(target[key], hash)
             })
             return res
         }
         function deepClone2(target, hash = new WeakMap()) {
-            if(target === null) {
+            if (target === null) {
                 return null
             }
-            if(target instanceof Date) {
+            if (target instanceof Date) {
                 return new Date(target)
             }
-            if(target instanceof RegExp) {
+            if (target instanceof RegExp) {
                 return new RegExp(target)
             }
-            if(typeof target !== 'object') {
+            if (typeof target === 'object') {
                 return target
             }
-            if(hash.has(target)) {
+            if (hash.has(target)) {
                 return hash.get(target)
             }
             const res = Array.isArray(target) ? [] : {}
@@ -303,7 +346,7 @@
         }
         // 方法 1 - 麓一
         function newObj1(Father, ...args) {
-            if(typeof Father !== 'function') {
+            if (typeof Father !== 'function') {
                 throw new Error('构造函数的第一个参数必须是一个函数')
             }
             var obj = Object.create(Father.prototype)
@@ -313,32 +356,45 @@
             var res = Father.apply(obj, Array.prototype.slice.call(arguments, 1))
             // ‘特定情况’  
             return res && typeof res === 'object' ? res : obj
-
+        }
+        function newObj2(Father, ...args) {
             // 云隐
             var obj = {}
             Object.setPrototypeOf(obj, Father.prototype)
             var res = Father.apply(obj, args)
+            return res && typeof res === 'object' ? res : obj
         }
-        function newObj2(Father, ...args) {
-            
+        function newObj3(Father, ...args) {
+            // const obj = {}
+            // Object.setPrototypeOf(obj, Father.prototype)
+            // const res = Father.apply(obj, args)
+            const obj = Object.create(Father.prototype)
+            const res = Father.apply(obj, Array.prototype.slice.call(arguments, 1))
+            return res && typeof res === 'object' ? res : obj
         }
-        console.log(newObj1(Father, '50', 'yao'));
-        console.log(newObj2(Father, '50', 'yao'));
+        console.log(newObj1(Father, '50', 'yao'))
+        console.log(newObj2(Father, '50', 'yao'))
+        console.log(newObj3(Father, '50', 'yao'))
 
 
 
         function fn1(x){return x + 1}
         function fn2(x){return x + 2}
         function fn3(x){return x + 3}
-        const comps = compose(fn1, fn2, fn3)
+        const comps = compose2(fn1, fn2, fn3)
         console.log(comps(0)) // num + 1 + 2 + 3
         function compose() {
             const fns = [...arguments]
             return start => fns.reduce((total, fn) => fn(total), start)
         }
-        function compose() {
+        function compose2() {
             const fns = [...arguments]
-            return start => fns.reduce((total, fn) => fn(total), start)
+            // const start = fns.reduce((total, fn) => {
+            //     return fn(total)
+            // })
+            const start = () => fns.reduce((total, fn) => fn(total), start)
+            return start
+            // return start => fns.reduce((total, fn) => fn(total), start)
         }
 
     </script>
