@@ -11,6 +11,8 @@
         let obj = {}
         /**
          * Reflect：集成 Object 的所有方法，统一、方便
+         * 有一个区别：Object.* 第一个参数(目标对象)不是对象的话，会试图把它转换为一个对象，
+                    而这种情况下 Reflect.* 方法会抛出一个错误
         */
         // 检查对象是否为空
         const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object;
