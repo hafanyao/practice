@@ -39,6 +39,23 @@
             }
             return value
         })
+
+
+
+        /*
+            WeakSet 类似于 Set，可以存储弱引用的对象。
+            如果没有其他引用指向一个对象，那么这个对象会被回收，不需要手动删除。
+            使用场景：存储一些‘临时对象’，又不希望占用太多的内存
+        */
+        const myWeakSet = new WeakSet()
+        const obj1 = {}
+        const obj2 = {}
+        myWeakSet.add(obj1)
+        myWeakSet.add(obj2)
+        console.log(myWeakSet.has(obj1)) // true
+        obj1 = null
+        console.log(myWeakSet.has(obj1)) // false
+        
     </script>
 </body>
 </html>

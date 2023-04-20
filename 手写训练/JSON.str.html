@@ -8,9 +8,9 @@
     <img src="../images/clone-01.png">
 </head>
 <body>
-    <div id="demo" style="margin: 50px;"></div>
-    <div id="demo2" style="margin: 50px;"></div>
-    <div id="demo3" style="margin: 50px;"></div>
+    <div id="demo" style="margin: 50px"></div>
+    <div id="demo2" style="margin: 50px"></div>
+    <div id="demo3" style="margin: 50px"></div>
     <script>
         // 路白 - https://www.bilibili.com/video/BV1EF411h71G
 
@@ -26,8 +26,8 @@
             obj[symbol] = 'test'
             return obj
         }
-        console.log(getObj());
-        console.log('------------------');
+        console.log(getObj())
+        console.log('------------------')
 
 
         // 1. 具体如何让一个对象可遍历
@@ -162,12 +162,12 @@
             arr1: [{
                 name: 'hafanYao'
             }]
-        };
+        }
 
-        const myJSON = JSON.stringify(target);
-        document.getElementById("demo").innerHTML = myJSON;
+        const myJSON = JSON.stringify(target)
+        document.getElementById("demo").innerHTML = myJSON
         const myJSON2 = JSON.stringify(deepClone2(target))
-        document.getElementById("demo2").innerHTML = myJSON2;
+        document.getElementById("demo2").innerHTML = myJSON2
         
     </script>
 </body>
