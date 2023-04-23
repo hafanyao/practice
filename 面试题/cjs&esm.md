@@ -1,4 +1,5 @@
 # https://www.zhihu.com/question/20351507
+# https://juejin.cn/post/7212503883263787064
 
 ### 时间轴：CommonJS --> AMD --> CMD --> ES Module
 
@@ -7,6 +8,7 @@
     2. 特点：同步/运行时加载，磁盘读取速度快
     3. 语法：module.exports => require
     4. exports 与 module.exports 指向同一个内存
+    5. 核心思想：将每个文件都看作一个模块，每个模块都有自己的作用域，其中的变量、函数和对象都是私有的，不能被外部访问。要访问模块中的数据，必须通过 exports 和 require 的方式
 
 - AMD - RequireJS 推广过程中对模块定义的规范化产出
     1. 常用于：不常用，CommonJs 的浏览器端实现
