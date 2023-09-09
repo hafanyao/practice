@@ -73,12 +73,12 @@
         const run = () => {
             if(!requestPipe.length) return
             // 执行栈满后，直接 race
-            const _finsh = Promise.rece(reqPool)
+            const _finsh = Promise.race(reqPool)
             _finsh.then(res => {
                 // indexOf 实际场景要准确处理
                 const _done = reqPool.indexOf(_finsh)
                 reqPool.splice(_done, 1)
-                add() // rece 了一个，所以在此推入新的
+                add() // race 了一个，所以在此推入新的
             })
             run()
         }

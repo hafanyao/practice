@@ -47,7 +47,7 @@
         可点击区域可以是矩形、圆形或多边形区域这些形状之一。
         如果不指定形状，就会认为是整个图像。 -->
     <div>
-        <img src="text.jpg" width="500" height="500" alt="Circus" usemap="#circusmap">
+        <img src="./images/text.jpg" width="500" height="500" alt="Circus" usemap="#circusmap">
         <map name="circusmap">
             <area shape="rect" coords="67,114,207,254" href="elephant.htm">
             <area shape="rect" coords="222,141,318, 256" href="lion.htm">
@@ -140,4 +140,13 @@
        placeholder="6-20 chars, at least 1 digit, 1 uppercase and one lowercase letter"
        pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$" autofocus required>
 </body>
+
+<script>
+    function aaa(...args) {
+        console.log(args);
+        const arg = Array.prototype.slice.call(args, 1);
+        console.log(arg);
+    };
+    aaa(1, 2, 3);
+</script>
 </html>

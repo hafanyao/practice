@@ -8,6 +8,8 @@
 </head>
 <body>
     <script>
+        // 柯里化：将一个接受多个参数的函数转换为一个接受一个参数的函数序列 ***
+
         // 路白 - https://www.bilibili.com/video/BV1ug411w7sb/
         (function() {
             // 柯里化
@@ -118,8 +120,7 @@
         console.log('------------')
 
         (function() {
-            return
-            // 老路
+            // 老路 - https://juejin.cn/post/7223938976158957624
             function curry (func) {
                 return function curried (...args) {
                     if (args.length >= func.length) {

@@ -304,4 +304,24 @@
                 }
             )
         ```
+    17. 获取'组件实例',（vue2 中的 this）
+        ```js
+            <script>
+                import { getCurrentInstance } from 'vue'
+
+                // proxy 就是当前组件实例，可以理解为组件级别的 this，没有全局的、路由、状态管理之类的
+                const { proxy, appContext } = getCurrentInstance()
+
+                // 这个 global 就是全局实例
+                const global = appContext.config.globalProperties
+            </script>
+        ```
+    18. 全局挂载
+        ```js
+            // vue2
+            Vue.prototype.name = 'hafan'
+            // vue3
+            const app = createApp(App)
+            app.config.globalProperties.name = 'hafan'
+        ```
 

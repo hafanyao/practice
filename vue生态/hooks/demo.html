@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hooks 使用范例</title>
+</head>
+<body>
+    <h1>hooks 相当于组件级别的逻辑封装</h1>
+    <script lang="ts">
+        // 1. 定义 hook
+        import { computed, ref, Ref } from "vue"
+        type CountResultProps = {
+            count:Ref<number>;
+            multiple:Ref<number>;
+            increase:(delta?:number)=>void;
+            decrease:(delta?:number)=> void;
+        }
+        export default function useCount(initValue = 1):CountResultProps{
+            const count = ref(initValue)
+            const increase = (delta?:number):void =>{
+                if(typeof delta !== 'undefined'){
+                    count.value += delta
+                }else{
+                    count.value += 1
+                }
+            }
+            const multiple  = computed(()=>count.value * 2)
+            const decrease = (delta?:number):void=>{
+                if(typeof delta !== "undefined"){
+                    count.value -= delta
+                }else{
+                    count.value -= 1
+                }
+            }
+            return {
+                count,
+                increase,
+                decrease,
+                multiple
+            }
+        
+        }
+    </script>
+
+    
+    <!-- 2. 组件中使用 hook -->
+    <template>
+        <p>count:{{count}}</p>
+        <p>倍数:{{multiple}}</p>
+        <div>
+            <button @click="increase(10)">加一</button>
+            <button @click="decrease(10)">减一</button> // 在模版中直接使用hooks中的方法作为回调函数
+        </div>
+    </template>
+    <script setup lang="ts">
+        import useCount from "../views/Hook"
+        const {count,multiple,increase,decrease}  = useCount(10)
+    </script>
+</body>
+</html>

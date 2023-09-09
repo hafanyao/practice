@@ -41,10 +41,11 @@
 
 
 
-04. webpack 热更新原理
-    1. 启动webpack生成compiler实例，compiler上有很多方法，例如监听本地文件的变化
-    2. 使用express框架启动本地server，让浏览器可以请求本地的静态资源
-    3. 启动websocket服务，当本地文件发生变化，可以立即告知浏览器可以热更新代码
+04. webpack 热更新原理 - https://juejin.cn/post/7187368174952644665
+    1. 启动 webpack 生成 compiler 实例，compiler 上有很多方法，例如监听本地文件的变化，
+       将 client 以 plugin 的形式挂载到 compiler
+    2. 使用 express 框架启动本地 server，让浏览器可以请求本地的静态资源
+    3. 启动 websocket 服务，当本地文件发生变化，可以立即告知浏览器可以热更新代码
 
     1. 当修改了一个或多个文件
     2. 文件系统接收更改并通知 webpack
