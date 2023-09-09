@@ -19,7 +19,14 @@
             原型链(__proto__)查找规则：自下而上，沿着原型链逐级向上查找，直到 null 而止，如果未定义则 undefined
             Object.getPrototypeOf() 方法，可以获取对象的原型，Object.setPrototypeOf() 方法，可以设置对象的原型
             原型链的尽头一般来说都是 Object.prototype 所以这就是新建的对象为什么能够使用 toString() 等方法的原因
-        ***/ 
+        ***/
+
+        /***
+            prototype 被称为显式原型【通常是我们自己写，自己设置的，主要针对构造函数】
+            __proto__ 被称为隐式原型【自己生成的, 一般不会去更改，但是可以改，主要针对实例化对象】
+            constructor 被称为构造器【通常是prototype的反方向，主要针对构造函数的显式原型】
+            constructor 指向构造函数本身，(Person.prototype.constructor === Person)
+        ***/
 
 
         console.log(window.prototype); // undefined
@@ -57,12 +64,9 @@
 
         /*
             -- 问题 1
-
             a = {} 和 a = Object.create({}) 的区别：
-                
                 {} 原型只有一层，Object.create({}) -> 是两层，基于空对象去创建对象，有原型指向关系
                 如何实现只有一层原型: Object.create(Object.prototype)
-
         */
 
         //  判断一个对象有没有属性最安全的方法
@@ -80,7 +84,7 @@
         /*
             new 关键字做了什么
                 1. 创建一个新的空对象
-                2. 将对象原型指向构造函数（__proto__ 指向 prototype）
+                2. 将新对象的原型指向构造函数的prototype（__proto__ 指向 prototype）
                 3. 改变 this 指向，继承构造函数的属性和方法
                     （将空对象作为构造函数的上下文，同时将参数传到构造器中）
                 4. 对构造函数的返回值进行判断

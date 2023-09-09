@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>严格模式</title>
+</head>
+<body>
+    <script>
+        // class 实例
+        class Cat {
+            touch() {
+                return function fn() {
+                    console.log(this);
+                }
+            }
+        }
+        const cat = new Cat()
+        const cat_touch = cat.touch()
+        cat_touch()
+
+        // 常规实例
+        function Dog() {}
+        Dog.prototype.touch = function() {
+            return function fn() {
+                console.log(this);
+            }
+        }
+        const dog = new Dog()
+        const dog_touch = dog.touch()
+        dog_touch()
+
+        /*
+            问题1：
+                为什么 class 实例中的 this 指向 undefined，
+                而常规实例中的 this 指向 window ？？？
+            答案：类作用域默认能且仅能支持严格模式，也就是说，
+                class 区块中的所有语法将默认在严格模式下执行
+            注解：严格模式中，函数独立调用 this 默认绑定 undefined，
+                而在非严格模式中 this 则绑定 globalThis
+        */
+
+        console.log({}.__protp__);
+        console.log(dog.constructor === Dog);
+        console.log(dog.__proto__ === Dog.prototype);
+        console.log(Dog.prototype.constructor === Dog);
+    </script>
+</body>
+</html>
