@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单例模式</title>
+</head>
+<body>
+    <button id="btn">init time</button>
+    <script>
+        window.onload = function() {
+
+            var timeIns = null
+            function Init_xxx(_time) {
+                this._time = new Date().toLocaleTimeString()
+            }
+            document.getElementById('btn').onclick = function() {
+                if (!timeIns) timeIns = new Init_xxx()
+                alert(JSON.stringify(timeIns))
+            }
+            
+            console.log('-----------------');
+
+            // ES6实现
+            class Singleton2 {
+                constructor(name) {
+                    if (!Singleton2.instance) {
+                        this.name = name;
+                        // 
+                        Singleton2.instance = this;
+                    }
+                    return Singleton2.instance;
+                }
+            }
+
+            const single3 = new Singleton2('aaa');
+            const single4 = new Singleton2('bbb');
+
+            console.log(single3);
+            console.log(single4);
+            console.log(single3 === single4);
+        }
+    </script>
+</body>
+</html>

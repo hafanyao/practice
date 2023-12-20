@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>尾递归</title>
+  </head>
+  <body>
+    <script>
+      function fibonacci(n) {
+        if (n === 1 || n == 2) {
+          return 1;
+        } else {
+          console.log(fibonacci(n - 1) + fibonacci(n - 2));
+          return fibonacci(n - 1) + fibonacci(n - 2);
+        }
+      }
+      // console.log(fibonacci(10));
+
+      function factorial(n) {
+        console.log(n);
+        if (n === 1) {
+          return 1;
+        } else {
+          return n * factorial(n - 1);
+        }
+      }
+      console.log(factorial(5));
+
+      function fn(n) {
+        if (n === 1) {
+          return 1;
+        }
+        if (n === 2) {
+          return 2;
+        }
+        return fn(n - 1) + fn(n - 2);
+      }
+      console.log(fn(10));
+    </script>
+  </body>
+</html>

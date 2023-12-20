@@ -13,8 +13,8 @@
          * @param {Array} array1
          * @param {Array} array2
          */
-        export function scalarArrayEquals(array1, array2) {
-            return array1.length === array2.length && array1.every(function(v, i) { return v ===array2[i]})
+        function scalarArrayEquals(array1, array2) {
+            return array1.length === array2.length && array1.every(function(v, i) { return v === array2[i]})
         }
 
 
@@ -31,6 +31,16 @@
         const array2 = Array.prototype.concat.apply([], arrayLike);
         console.log(array2); // [ 1, 2 ]
 
+
+
+        /*
+            index（必需）：从该位置开始替换数据。如果为负值，表示倒数。
+            start（可选）：从该位置开始读取数据，默认为 0。如果为负值，表示从末尾开始计算。
+            end（可选）：到该位置前停止读取数据，默认等于数组长度。如果为负值，表示从末尾开始计算。
+        */
+        const arr = ['xxx', 'xxx', 'xxx', 'xxx', '---']
+        const arr2 = arr.copyWithin(0, 4, 5)
+        console.log(arr, arr2);
     </script>
 </body>
 </html>
