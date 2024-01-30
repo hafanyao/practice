@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflect</title>
+</head>
+<body>
+    
+    <script>
+
+        // ** 与 Proxy 配合使用 ** /
+
+        const man = {
+            age: 30,
+            sex: '男'
+        };
+        
+        const LiJan = new Proxy(man, {
+            get(target, propName) {
+                console.log(`读取 ${propName} 属性`);
+                return Reflect.get(target, propName);
+            },
+            set(target, propName, value) {
+                console.log(`修改 ${propName} 属性，值为：${value}`);
+                target[propName] = value;
+                return Reflect.set(target, propName, value);
+            },
+            deleteProperty(target, propName) {
+                console.log(`删除 ${propName} 属性`);
+                return Reflect.deleteProperty(target, propName);
+            }
+        });
+
+
+
+
+
+
+        // ** 发生错误不会形成阻塞 ** /
+
+        const Yao = {};
+        Object.defineProperty(Yao, 'sex', {
+            value: '男',
+            writable: false,
+            enumerable: true,
+            configurable: false
+        });
+
+        Object.defineProperty(Yao, 'sex', {
+            value: '女'
+        });
+
+        const res = Reflect.defineProperty(Yao, 'sex', {
+            value: '女'
+        });
+        console.log(res, Yao.sex);
+
+    </script>
+</body>
+</html>
