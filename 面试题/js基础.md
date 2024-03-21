@@ -10,4 +10,7 @@
         console.log(obj.toString)//undefined
         console.log(obj.hasOwnProperty)//undefined
     ```
-    
+
+### 深拷贝/浅拷贝 
+1. Object.assign() 不属于深拷贝
+2. JSON 的序列化和反序列化，会实现一个全新的深拷贝对象
