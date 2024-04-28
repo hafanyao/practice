@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 滚动条容器 */
+        #box1::-webkit-scrollbar {
+            width: 6px;
+            background-color: blue;
+        }
+        /* 滚动条轨道 */
+        #box1::-webkit-scrollbar-track {
+            background-color: #f0f0f0;
+        }
+        /* 滚动条本身 */
+        #box1::-webkit-scrollbar-thumb {
+            background-color: red;
+            border-radius: 3px;
+        }
+        #box1 {
+            width: 400px;
+            height: 400px;
+            overflow: auto;
+            background-color: darkblue;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+        }
+        #box2 {
+            width: 394px;
+            height: 800px;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div id="box1">
+        <div id="box2"></div>
+    </div>
+</body>
+</html>
