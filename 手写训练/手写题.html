@@ -43,16 +43,16 @@
 
 
         // 使定时器没回调
-        (function() {
-            console.log(0);
-            await delay(1000);
-            console.log(1);
-            const delay = (time) => new Promies((resolve) => setTimeout(resolve, time));
+        (async function() {
+            console.log('delay:', 0);
+            delay && await delay(1000);
+            console.log('delay:', 1);
+            var delay = (time) => new Promies((resolve) => setTimeout(resolve, time));
         })();
 
 
 
-        // 64格子指数幂
+        // 64 格子指数幂
         (function() {
             let num = 1;
             for (let i = 0; i < 64; i++) {
@@ -63,7 +63,7 @@
         
 
 
-        // 1-100求和
+        // 1-100 求和
         (function() {
 
             function add(num) {
@@ -172,9 +172,6 @@
                     return arr.concat(Array.isArray(item) ? flat2(item) : item);
                 }, []);
             };
-            function flat2(array) {
-                
-            }
             console.log(flat2([1, [2, 3, 4], [5, [6, [7, [8]]]]]).toString());
 
             // 方法 3
@@ -222,13 +219,22 @@
 
         // 计算1-10000中出现的 0 的次数
         (function() {
-            let arr = new Array(10000).fill('')
-                .map((_, index) => index + 1)
+            const arr = new Array(10001)
+                .fill('')
+                .map((_, index) => index)
                 .filter(item => /0/.test(item))
                 .reduce((num, item) => {
                     return num += (String(item).match(/0/g) || []).length
                 }, 0);
             console.log(arr);
+
+            const total = new Array(10001)
+                .fill('')
+                .map((_, index) => index)
+                .reduce((num, item) => {
+                    return num += item.toString().split('0').length - 1
+                }, 0)
+            console.log(total);
         })();
 
 

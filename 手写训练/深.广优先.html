@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>深度优先</title>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <!-- 
 
         两者的区别
@@ -26,113 +24,160 @@
      -->
 
     <script>
-        const data = [{
-                name: 'a',
-                children: [{
-                        name: 'a1',
-                        children: [{
-                                name: 'a11'
-                            },
-                            {
-                                name: 'a12'
-                            },
-                        ]
-                    },
-                    {
-                        name: 'a2'
-                    },
-                    {
-                        name: 'a3'
-                    },
-                ],
+      const data = [
+        {
+          name: "a",
+          children: [
+            {
+              name: "a1",
+              children: [
+                {
+                  name: "a11",
+                },
+                {
+                  name: "a12",
+                },
+              ],
             },
             {
-                name: 'b',
-                children: [{
-                        name: 'b1'
-                    },
-                    {
-                        name: 'b2'
-                    },
-                    {
-                        name: 'b3'
-                    }
-                ]
-            }
-        ]
+              name: "a2",
+            },
+            {
+              name: "a3",
+            },
+          ],
+        },
+        {
+          name: "b",
+          children: [
+            {
+              name: "b1",
+            },
+            {
+              name: "b2",
+            },
+            {
+              name: "b3",
+            },
+          ],
+        },
+      ];
 
-
-
-
-
-        /***
+      /***
             深度优先：就是按照节点一级一级往下找，然后返回节点继续搜索
          ***/
 
-        // 递归, 往下找到一个节点，就放入res，子节点也是如此
-        function depthFirstSearch(data, res = []) {
-            data.forEach(item => {
-                res.push(item.name)
-                if (item.hasOwnProperty('children')) { //如果有子元素，继续进行查找
-                    depthFirstSearch(item.children, res)
-                }
-            })
-            return res
-        }
-        console.log('深度优先', depthFirstSearch(data))
-        //深度优先遍历顺序 (10) ['a', 'a1', 'a11', 'a12', 'a2', 'a3', 'b', 'b1', 'b2', 'b3']
+      // 递归, 往下找到一个节点，就放入res，子节点也是如此
+      function depthFirstSearch(data, res = []) {
+        data.forEach((item) => {
+          res.push(item.name);
+          if (item.hasOwnProperty("children")) {
+            //如果有子元素，继续进行查找
+            depthFirstSearch(item.children, res);
+          }
+        });
+        return res;
+      }
+      //   console.log("深度优先", depthFirstSearch(data));
+      // 深度优先遍历顺序 (10) ['a', 'a1', 'a11', 'a12', 'a2', 'a3', 'b', 'b1', 'b2', 'b3']
 
+      function depth(data, res = []) {
+        data.forEach((item) => {
+          res.push(item.name);
+          if (item.hasOwnProperty("children")) {
+            item.hasOwnProperty.depth(item.children, res);
+          }
+        });
+        return res;
+      }
+      //   console.log("深度优先", depth(data));
 
-        function depth(data, res = []) {
-            data.forEach(item => {
-                res.push(item.name)
-                if(item.hasOwnProperty('children')) {
-                    item.hasOwnProperty.
-                    depth(item.children, res)
-                }
-            })
-            return res
-        }
-        console.log('深度优先', depth(data))
-
-
-        /***
+      /***
             广度优先：利用队列的特性，把每一层存入队列，先进先出
         ***/
-        // 创建一个执行队列, 当队列为空的时候则结束
-        function breadthFirstSearch(data) {
-            let res = [] // 存放顺序集-结果
-            let queue = [...data] //模拟一个队列, 先进先出
-            while (queue.length > 0) {
-                let item = queue.shift() //取出队列的第一项给item, 删除队列内的第一项
-                res.push(item.name) //值存入顺序
-                if (item.hasOwnProperty('children')) { //如果有子节点，再次存入队列
-                    queue.push(...item.children)
-                }
-            }
-            return res
+      // 创建一个执行队列, 当队列为空的时候则结束
+      function breadthFirstSearch(data) {
+        let res = []; // 存放顺序集-结果
+        let queue = [...data]; // 模拟一个队列, 先进先出
+        while (queue.length > 0) {
+          let item = queue.shift(); // 取出队列的第一项给item, 删除队列内的第一项
+          res.push(item.name); // 值存入顺序
+          if (item.hasOwnProperty("children")) {
+            // 如果有子节点，再次存入队列
+            queue.push(...item.children);
+          }
         }
-        console.log('广度优先', breadthFirstSearch(data))
-        //广度优先 (10) ['a', 'b', 'a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'a11', 'a12']
+        return res;
+      }
+      //   console.log("广度优先", breadthFirstSearch(data));
+      // 广度优先 (10) ['a', 'b', 'a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'a11', 'a12']
 
-
-        function breadth(data) {
-            const res = []
-            const queue = [...data]
-            while(queue.length) {
-                const item = queue.shift()
-                res.push(item.name)
-                if(item.hasOwnProperty('children')) {
-                    queue.push(...item.children)
-                }
-            }
-            return res
+      function breadth(data) {
+        const res = [];
+        const queue = [...data];
+        while (queue.length) {
+          const item = queue.shift();
+          res.push(item.name);
+          if (item.hasOwnProperty("children")) {
+            queue.push(...item.children);
+          }
         }
-        console.log('广度优先', breadth(data))
+        return res;
+      }
+      //   console.log("广度优先", breadth(data));
 
+      const xxxdata = [
+        {
+          label: "root 1",
+          value: "root 1",
+          children: [
+            {
+              label: "parent 1",
+              value: "parent 1",
+              children: [
+                {
+                  label: "parent 1-0",
+                  value: "parent 1-0",
+                  children: [
+                    {
+                      label: "my leaf",
+                      value: "leaf1",
+                    },
+                    {
+                      label: "your leaf",
+                      value: "leaf2",
+                    },
+                  ],
+                },
+                {
+                  label: "parent 1-1",
+                  value: "parent 1-1",
+                },
+              ],
+            },
+            {
+              label: "parent 2",
+              value: "parent 2",
+            },
+          ],
+        },
+      ];
 
+      function depthForamt(data, res = []) {
+        data.forEach((item) => {
+          res.push({
+            a: item.label,
+            b: item.value,
+            c: item.children || [],
+          });
+          if (item.hasOwnProperty("children")) {
+            // 如果有子元素，继续进行查找
+            depthFirstSearch(item.children, res);
+          }
+        });
+        return res;
+      }
+      console.log(depthForamt(xxxdata));
     </script>
-
-</body>
-
+  </body>
 </html>
