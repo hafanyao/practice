@@ -65,36 +65,36 @@
             alert(this.name); 
         }; 
         var person1 = new Person(); 
-        person1.sayName(); //"Nicholas" 
+        person1.sayName(); // "Nicholas" 
         var person2 = new Person();
-        person2.sayName(); //"Nicholas" 
-        alert(person1.sayName == person2.sayName); //true 
+        person2.sayName(); // "Nicholas" 
+        alert(person1.sayName == person2.sayName); // true 
 
         // 确定函数原型对象和实例之间的关系
-        alert(Person.prototype.isPrototypeOf(person1)); //true 
-        alert(Person.prototype.isPrototypeOf(person2)); //true 
+        alert(Person.prototype.isPrototypeOf(person1)); // true 
+        alert(Person.prototype.isPrototypeOf(person2)); // true 
         // es5
-        alert(Object.getPrototypeOf(person1) == Person.prototype); //true 
-        alert(Object.getPrototypeOf(person1).name); //"Nicholas" 
+        alert(Object.getPrototypeOf(person1) == Person.prototype); // true 
+        alert(Object.getPrototypeOf(person1).name); // "Nicholas" 
 
         // 对象实例添加的同名属性会屏蔽对象实例的原型对象中的属性，因为属性值会先从对象实例的属性里面查找，找不到才会去原型对象里面去找，想解除屏蔽，只有delete掉那个属性
         // 在chrome59中可以通过修改person1.__proto__对象改变原型对象的值，与红宝书所说不符
         person1.name = "Greg"; 
-        alert(person1.name); //"Greg"——来自实例
-        alert(person2.name); //"Nicholas"——来自原型
+        alert(person1.name); // "Greg"——来自实例
+        alert(person2.name); // "Nicholas"——来自原型
         delete person1.name; 
-        alert(person1.name); //"Nicholas"——来自原型
+        alert(person1.name); // "Nicholas"——来自原型
 
         // 判断属性是不是对象实例的
-        alert(person1.hasOwnProperty("name")); //false 
+        alert(Object.hasOwn(person1, 'name')); // false 
         person1.name = "Greg"; 
-        alert(person1.name); //"Greg"——来自实例
-        alert(person1.hasOwnProperty("name")); //true 
-        alert(person2.name); //"Nicholas"——来自原型
-        alert(person2.hasOwnProperty("name")); //false 
+        alert(person1.name); // "Greg"——来自实例
+        alert(Object.hasOwn(person1, 'name')); // true 
+        alert(person2.name); // "Nicholas"——来自原型
+        alert(Object.hasOwn(person2, 'name')); // false 
         delete person1.name; 
-        alert(person1.name); //"Nicholas"——来自原型
-        alert(person1.hasOwnProperty("name")); //false 
+        alert(person1.name); // "Nicholas"——来自原型
+        alert(Object.hasOwn(person1, 'name')); // false 
 
         // in操作符单独使用可以用来判断某属性是否存在于对象实例或原型对象中
         alert('name' in person1)
@@ -107,16 +107,16 @@
 
         // 想要获取对象上所有可枚举的实例属性，可以使用Object.keys()
         var keys = Object.keys(Person.prototype); 
-        alert(keys); //["name", "age", "job", "sayName"]
+        alert(keys); // ["name", "age", "job", "sayName"]
         var p1 = new Person(); 
         p1.name = "Rob"; 
         p1.age = 31; 
         var p1keys = Object.keys(p1); 
-        alert(p1keys); //["name", "age"]
+        alert(p1keys); // ["name", "age"]
 
-        // 想要获取对象上所有实例属性，无论是否是可枚举的，可以用Object.getOwnPropertyNames()，__proto__获取不到
+        // 想要获取对象上所有实例属性，无论是否是可枚举的，可以用 Object.getOwnPropertyNames()，__proto__ 获取不到
         var keys = Object.getOwnPropertyNames(Person.prototype); 
-        alert(keys); //["constructor", "name", "age", "job", "sayName"]
+        alert(keys); // ["constructor", "name", "age", "job", "sayName"]
 
         /*
         * 原型的动态性
@@ -126,7 +126,7 @@
         Person.prototype.sayHi = function(){ 
             alert("hi"); 
         }; 
-        friend.sayHi(); //"hi"（没有问题！）
+        friend.sayHi(); // "hi"（没有问题！）
 
         // 但是重写整个原型对象的话就不一样了，这时现有实例的__proto__属性值指向的是以前的原型对象，而以前的原型对象是没有sayName方法的
         function Person(){} 
@@ -140,7 +140,7 @@
                 alert(this.name); 
             } 
         }; 
-        friend.sayName(); //error 
+        friend.sayName(); // error 
 
         /*
         * 原生对象的原型
@@ -165,9 +165,9 @@
         var person1 = new Person(); 
         var person2 = new Person(); 
         person1.friends.push("Van"); 
-        alert(person1.friends); //"Shelby,Court,Van" 
-        alert(person2.friends); //"Shelby,Court,Van" 
-        alert(person1.friends === person2.friends); //true
+        alert(person1.friends); // "Shelby,Court,Van" 
+        alert(person2.friends); // "Shelby,Court,Van" 
+        alert(person1.friends === person2.friends); // true
 
 
 
@@ -188,10 +188,10 @@
         var person1 = new Person("Nicholas", 29, "Software Engineer"); 
         var person2 = new Person("Greg", 27, "Doctor"); 
         person1.friends.push("Van"); 
-        alert(person1.friends); //["Shelby", "Court", "Van"]
-        alert(person2.friends); //["Shelby", "Court"]
-        alert(person1.friends === person2.friends); //false 
-        alert(person1.sayName === person2.sayName); //true 
+        alert(person1.friends); // ["Shelby", "Court", "Van"]
+        alert(person2.friends); // ["Shelby", "Court"]
+        alert(person1.friends === person2.friends); // false 
+        alert(person1.sayName === person2.sayName); // true 
     </script>
 </body>
 </html>

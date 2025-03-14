@@ -52,7 +52,7 @@
         // function depth(data, res = []) {
         //     data.forEach(item => {
         //         res.push(item.name)
-        //         if(item.hasOwnProperty('children')) {
+        //         if (Object.hasOwn(item, 'children')) {
         //             depth(item.children, res)
         //         }
         //     })
@@ -61,7 +61,7 @@
         function depth(data, res = []) {
             data.forEach(item => {
                 res.push(item.name)
-                if(item.hasOwnProperty('children')) {
+                if (Object.hasOwn(item, 'children')) {
                     depth(item.children, res)
                 }
             })
@@ -76,7 +76,7 @@
         //     while(queue.length) {
         //         const item = queue.shift()
         //         res.push(item.name)
-        //         if(item.hasOwnProperty('children')) {
+        //         if (Object.hasOwn(item, 'children')) {
         //             queue.push(...item.children)
         //         }
         //     }
@@ -86,10 +86,10 @@
         // }
         function breadth(data) {
             const res = [], queue = [...data]
-            while(queue.length) {
+            while (queue.length) {
                 const item = queue.shift()
                 res.push(item.name)
-                if(item.hasOwnProperty('children')) {
+                if (Object.hasOwn(item, 'children')) {
                     queue.push(...item.children)
                 }
             }
@@ -119,7 +119,7 @@
             // 时间段触发
             let _timer = null
             return function() {
-                if(!_timer) {
+                if (!_timer) {
                     _timer = setTimeout(function() {
                         handle.apply(this, arguments)
                         _timer = null
@@ -136,16 +136,16 @@
         function maxChar(str) {
             const charObj = {}
             for (let i = 0; i < str.length; i++) {
-                if(charObj[str[i]]) {
+                if (charObj[str[i]]) {
                     charObj[str[i]] ++
-                }else {
+                } else {
                     charObj[str[i]] = 1
                 }
             }
             let maxStr = '', maxNum = 1
             const keys = Object.keys(charObj)
             for (const key of keys) {
-                if(charObj[key] > maxNum) {
+                if (charObj[key] > maxNum) {
                     maxStr = key
                     maxNum = charObj[key]
                 }
@@ -168,7 +168,7 @@
                 return {
                     next: () => {
                         obj.count ++
-                        if(obj.count <= 3) {
+                        if (obj.count <= 3) {
                             return {
                                 value: obj.count,
                                 done: false
@@ -189,7 +189,7 @@
                 return {
                     next: () => {
                         obj.count ++
-                        if(obj.count <= 3) {
+                        if (obj.count <= 3) {
                             return {
                                 done: false,
                                 value: obj.count
@@ -217,7 +217,7 @@
                 index: -1,
                 next(){
                     const keys = Object.keys(_this)
-                    if(this.index < keys.length){
+                    if (this.index < keys.length){
                         this.index ++
                         return {
                             value: _this[keys[this.index]],
@@ -270,19 +270,19 @@
 
 
         function deepClone(target, hash = new WeakMap()) {
-            if(target === null) {
+            if (target === null) {
                 return null
             }
-            if(target instanceof Date) {
+            if (target instanceof Date) {
                 return new Date(target)
             }
-            if(target instanceof RegExp) {
+            if (target instanceof RegExp) {
                 return new RegExp(target)
             }
-            if(typeof target !== 'object') {
+            if (typeof target !== 'object') {
                 return target
             }
-            if(hash.has(target)) {
+            if (hash.has(target)) {
                 return hash.get(target)
             }
             const res = Array.isArray(target) ? [] : {}

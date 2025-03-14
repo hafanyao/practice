@@ -142,11 +142,13 @@
 </body>
 
 <script>
-    function aaa(...args) {
-        console.log(args);
-        const arg = Array.prototype.slice.call(args, 1);
-        console.log(arg);
-    };
-    aaa(1, 2, 3);
+    const object = {
+        a: 1,
+        b: 2,
+        c: 3,
+    }
+    console.log(Object.keys(object));
+    console.log(Object.getOwnPropertyNames(object));
+    
 </script>
 </html>

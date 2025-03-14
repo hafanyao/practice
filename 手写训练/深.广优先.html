@@ -71,7 +71,7 @@
       function depthFirstSearch(data, res = []) {
         data.forEach((item) => {
           res.push(item.name);
-          if (item.hasOwnProperty("children")) {
+          if (Object.hasOwn(item, 'children')) {
             //如果有子元素，继续进行查找
             depthFirstSearch(item.children, res);
           }
@@ -84,7 +84,7 @@
       function depth(data, res = []) {
         data.forEach((item) => {
           res.push(item.name);
-          if (item.hasOwnProperty("children")) {
+          if (Object.hasOwn(item, 'children')) {
             item.hasOwnProperty.depth(item.children, res);
           }
         });
@@ -102,7 +102,7 @@
         while (queue.length > 0) {
           let item = queue.shift(); // 取出队列的第一项给item, 删除队列内的第一项
           res.push(item.name); // 值存入顺序
-          if (item.hasOwnProperty("children")) {
+          if (Object.hasOwn(item, 'children')) {
             // 如果有子节点，再次存入队列
             queue.push(...item.children);
           }
@@ -118,7 +118,7 @@
         while (queue.length) {
           const item = queue.shift();
           res.push(item.name);
-          if (item.hasOwnProperty("children")) {
+          if (Object.hasOwn(item, 'children')) {
             queue.push(...item.children);
           }
         }
@@ -170,7 +170,7 @@
             b: item.value,
             c: item.children || [],
           });
-          if (item.hasOwnProperty("children")) {
+          if (Object.hasOwn(item, 'children')) {
             // 如果有子元素，继续进行查找
             depthFirstSearch(item.children, res);
           }

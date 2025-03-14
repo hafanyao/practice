@@ -92,7 +92,7 @@
         // 如何判断属性是原型链内的还是自身基本属性
         P1.height = '180';
         for (const key in P1) {
-            if (P1.hasOwnProperty(key)) {
+            if (Object.hasOwn(P1, key)) {
                 console.log(key);
             };
         };

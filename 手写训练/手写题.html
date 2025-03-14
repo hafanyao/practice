@@ -67,7 +67,7 @@
         (function() {
 
             function add(num) {
-                if(num == 1) return 1;
+                if (num == 1) return 1;
                 return add(num - 1) + num;
             };
             console.log(add(100));
@@ -156,7 +156,7 @@
                 const newArr = [], stack = [...array];
                 while(stack.length) {
                     const item = stack.pop();
-                    if(Array.isArray(item)) {
+                    if (Array.isArray(item)) {
                         stack.push(...item);
                     }else {
                         newArr.unshift(item);
@@ -193,7 +193,7 @@
             function depth(data, res = []) {
                 data.forEach(item => {
                     res.push(item.name)
-                    if(item.hasOwnProperty('children')) {
+                    if (Object.hasOwn(item, 'children')) {
                         depth(item.children, res)
                     }
                 })
@@ -206,7 +206,7 @@
                 while(queue.length) {
                     let item = queue.shift()
                     res.push(item.name)
-                    if(item.hasOwnProperty('children')) {
+                    if (Object.hasOwn(item, 'children')) {
                         queue.push(...item.children)
                     }
                 }
@@ -246,7 +246,7 @@
             function findArr(arr1, arr2) {
                 let newArr = [];
                 for (const item of arr1) {
-                    if(arr2.includes(item)) {
+                    if (arr2.includes(item)) {
                         newArr.push(item);
                     };  
                 };
@@ -294,7 +294,7 @@
                 let charObj = {};
                 for (let i = 0; i < str.length; i++) {
                     // 如果没有记录过当前字符则默认设置为 1
-                    if(!charObj[str[i]]) {
+                    if (!charObj[str[i]]) {
                         charObj[str[i]] = 1;
                     }else { // 如果存在改字符则 +1
                         charObj[str[i]] += 1;
@@ -303,7 +303,7 @@
                 console.log(charObj);
                 let maxChar = '', maxValue = 1;
                 for (const key in charObj) {
-                    if(maxValue < charObj[key]) {
+                    if (maxValue < charObj[key]) {
                         maxChar = key;
                         maxValue = charObj[key];
                     }

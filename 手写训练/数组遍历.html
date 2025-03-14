@@ -24,7 +24,7 @@
                     3. 遍历的索引为字符串类型的数字，并不能直接进行计算
 
             for...of 获取键值, for...in 获取键名;
-            for...in 会遍历原型链, 性能差，可以结合 obj.hasOwnProperty(prop) 判断
+            for...in 会遍历原型链, 性能差，可以结合 Object.hasOwn() 判断
         */
 
         const arr = [1, 'a'];
